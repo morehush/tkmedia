@@ -1,0 +1,395 @@
+#sabnzbd, sonarr, radarr, plex, qbittorrent
+version: "3.3"
+networks:
+  proxy:
+    external: true
+
+services:
+  watchtower:
+    image: containrrr/watchtower
+    container_name: watchtower
+    environment:
+      - TZ=$TZ
+      - WATCHTOWER_SCHEDULE=0 0 5 * * *
+      - WATCHTOWER_CLEANUP=false
+      - WATCHTOWER_NOTIFICATIONS=shoutrrr
+      - WATCHTOWER_NOTIFICATION_URL=telegram://$BOT_TOKEN@telegram/?channels=$CHAT_ID
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    # command: --interval 30
+    restart: always
+
+  homepage:
+    image: ghcr.io/benphelps/homepage:latest
+    container_name: homepage
+    # ports:
+    #   - 3000:3000
+    volumes:
+      - ./homepage:/app/config
+      - $BIGVOL:/sgt5tb
+      - /var/run/docker.sock:/var/run/docker.sock # (optional) For docker integrations
+    restart: $RESTART
+    networks:
+      - proxy
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.homepage.entrypoints=http"
+      - "traefik.http.routers.homepage.rule=Host(`home.$DOMAIN`)"
+      - "traefik.http.middlewares.homepage-https-redirect.redirectscheme.scheme=https"
+      - "traefik.http.routers.homepage.middlewares=homepage-https-redirect"
+      - "traefik.http.routers.homepage-secure.entrypoints=https"
+      - "traefik.http.routers.homepage-secure.rule=Host(`home.$DOMAIN`)"
+      - "traefik.http.routers.homepage-secure.tls=true"
+      - "traefik.http.routers.homepage-secure.service=homepage"
+      - "traefik.http.services.homepage.loadbalancer.server.port=3000"
+      - "traefik.docker.network=proxy"
+
+  jellyfin:
+    image: lscr.io/linuxserver/jellyfin
+    container_name: jellyfin
+    environment:
+      - PUID=$PUID
+      - PGID=$PGID
+      - TZ=$TZ
+      - UMASK=22
+      - NVIDIA_VISIBLE_DEVICES=all
+      - JELLYFIN_PublishedServerUrl=jf.$DOMAIN #optional
+    # network_mode: host
+    # ports:
+    #   - 8096:8096
+    #   - 8920:8920 #optional
+    #   - 7359:7359/udp #optional
+    #   - 1900:1900/udp #optional
+    volumes:
+      - ./jellyfin:/config
+      - ./jellyfin/cache:/cache
+      - $CONFDIR/jf_transcode:/transcode
+      - $HOMEDIR:/homedir
+      - $BIGVOL/movies:/movies
+      - $BIGVOL/tv:/tv
+      - $BIGVOL/forkids:/forkids
+      - $BIGVOL/others:/others
+      - $BIGVOL/forkidstv:/forkidstv
+    devices:
+      - /dev/dri:/dev/dri #optional
+    restart: $RESTART
+    networks:
+      - proxy
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.jellyfin.entrypoints=http"
+      - "traefik.http.routers.jellyfin.rule=Host(`jf.$DOMAIN`)"
+      - "traefik.http.middlewares.jellyfin-https-redirect.redirectscheme.scheme=https"
+      - "traefik.http.routers.jellyfin.middlewares=jellyfin-https-redirect"
+      - "traefik.http.routers.jellyfin-secure.entrypoints=https"
+      - "traefik.http.routers.jellyfin-secure.rule=Host(`jf.$DOMAIN`)"
+      - "traefik.http.routers.jellyfin-secure.tls=true"
+      - "traefik.http.routers.jellyfin-secure.service=jellyfin"
+      - "traefik.http.services.jellyfin.loadbalancer.server.port=8096"
+      - "traefik.docker.network=proxy"
+
+  plex:
+    image: plexinc/pms-docker
+    container_name: plex
+    network_mode: host
+    environment:
+      - TZ=$TZ
+      - PUID=$PUID
+      - PGID=$PGID
+      - UMASK=22
+      - PLEX_CLAIM=$PLEXCLAIM
+      - ADVERTISE_IP=$PLEXIP
+    hostname: $HOSTNAME
+    #    ports:
+    #      - 32400:32400/tcp
+    #      - 3005:3005/tcp
+    #      - 8324:8324/tcp
+    #      - 32469:32469/tcp
+    #      - 1900:1900/udp
+    #      - 32410:32410/udp
+    #      - 32412:32412/udp
+    #      - 32413:32413/udp
+    #      - 32414:32414/udp
+    volumes:
+      - ./plex/database:/config
+      - $CONFDIR/plex_transcode:/transcode
+      - $BIGVOL/movies:/movies
+      - $BIGVOL/tv:/tv
+      - $BIGVOL/malindamovies:/malindamovies
+      - $BIGVOL/forkids:/forkids
+      - $BIGVOL/others:/others
+      - $BIGVOL/forkidstv:/forkidstv
+    restart: $RESTART
+
+  traefik:
+    image: traefik:latest
+    container_name: traefik
+    logging:
+      options:
+        max-size: "10m"
+        max-file: "3"
+    security_opt:
+      - no-new-privileges:true
+    networks:
+      - proxy
+    ports:
+      - 80:80
+      - 443:443
+    environment:
+      - CF_API_EMAIL=$CFEMAIL
+      - CF_API_KEY=$CFAPIKEY
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ./traefik/data/traefik.yml:/traefik.yml:ro
+      - ./traefik/data/acme.json:/acme.json
+      - ./traefik/data/config.yml:/config.yml
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.traefik.entrypoints=http"
+      - "traefik.http.routers.traefik.rule=Host(`traefik.$DOMAIN`)"
+      # - "traefik.http.middlewares.traefik-auth.basicauth.users=morehush:$$apr1$$aqtd2dOT$$5HzkqpqCSWqJA0Wj0taIX0"
+      - "traefik.http.middlewares.traefik-https-redirect.redirectscheme.scheme=https"
+      - "traefik.http.middlewares.sslheader.headers.customrequestheaders.X-Forwarded-Proto=https"
+      - "traefik.http.routers.traefik.middlewares=traefik-https-redirect"
+      - "traefik.http.routers.traefik-secure.entrypoints=https"
+      - "traefik.http.routers.traefik-secure.rule=Host(`traefik.$DOMAIN`)"
+      # - "traefik.http.routers.traefik-secure.middlewares=traefik-auth"
+      - "traefik.http.routers.traefik-secure.tls=true"
+      - "traefik.http.routers.traefik-secure.tls.certresolver=cloudflare"
+      - "traefik.http.routers.traefik-secure.tls.domains[0].main=$DOMAIN"
+      - "traefik.http.routers.traefik-secure.tls.domains[0].sans=*.$DOMAIN"
+      - "traefik.http.routers.traefik-secure.service=api@internal"
+    restart: $RESTART
+
+  prowlarr:
+    image: lscr.io/linuxserver/prowlarr:develop
+    container_name: prowlarr
+    environment:
+      - TZ=$TZ
+      - PUID=$PUID
+      - PGID=$PGID
+    # ports:
+    #   - 9696:9696
+    volumes:
+      - ./prowlarr:/config
+      - ./downloads:/downloads
+    restart: $RESTART
+    networks:
+      - proxy
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.prowlarr.entrypoints=http"
+      - "traefik.http.routers.prowlarr.rule=Host(`p.$DOMAIN`)"
+      - "traefik.http.middlewares.prowlarr-https-redirect.redirectscheme.scheme=https"
+      - "traefik.http.routers.prowlarr.middlewares=prowlarr-https-redirect"
+      - "traefik.http.routers.prowlarr-secure.entrypoints=https"
+      - "traefik.http.routers.prowlarr-secure.rule=Host(`p.$DOMAIN`)"
+      - "traefik.http.routers.prowlarr-secure.tls=true"
+      - "traefik.http.routers.prowlarr-secure.service=prowlarr"
+      - "traefik.http.services.prowlarr.loadbalancer.server.port=9696"
+      - "traefik.docker.network=proxy"
+
+  sabnzbd:
+    image: lscr.io/linuxserver/sabnzbd
+    container_name: sabnzbd
+    environment:
+      - TZ=$TZ
+      - PUID=$PUID
+      - PGID=$PGID
+    # ports:
+    #   - 8181:8080 # port mapping
+    volumes:
+      - ./sabnzbd/config:/config # sab config directory
+      - ./downloads:/downloads # completed directory for downloads. this contains the category directories
+      - ./downloads/incomplete:/incomplete-downloads # temp directory for downloads
+      - $BIGVOL/others:/others
+    restart: $RESTART
+    networks:
+      - proxy
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.sabnzbd.entrypoints=http"
+      - "traefik.http.routers.sabnzbd.rule=Host(`sab.$DOMAIN`)"
+      - "traefik.http.middlewares.sabnzbd-https-redirect.redirectscheme.scheme=https"
+      - "traefik.http.routers.sabnzbd.middlewares=sabnzbd-https-redirect"
+      - "traefik.http.routers.sabnzbd-secure.entrypoints=https"
+      - "traefik.http.routers.sabnzbd-secure.rule=Host(`sab.$DOMAIN`)"
+      - "traefik.http.routers.sabnzbd-secure.tls=true"
+      - "traefik.http.routers.sabnzbd-secure.service=sabnzbd"
+      - "traefik.http.services.sabnzbd.loadbalancer.server.port=8080"
+      - "traefik.docker.network=proxy"
+
+  sonarr:
+    image: lscr.io/linuxserver/sonarr:develop
+    container_name: sonarr
+    environment:
+      - TZ=$TZ
+      - PUID=$PUID
+      - PGID=$PGID
+      - UMASK=22
+    # ports:
+    #   - 8989:8989 # port mapping
+    volumes:
+      - ./sonarr:/config # sonarr config dir
+      - ./downloads:/downloads # your completed downloads directory from sab
+      - $BIGVOL/tv:/tv # where it will copy your files when done. add as many of these as you need
+      - $BIGVOL/forkidstv:/forkidstv
+    restart: $RESTART
+    networks:
+      - proxy
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.sonarr.entrypoints=http"
+      - "traefik.http.routers.sonarr.rule=Host(`sonarr.$DOMAIN`)"
+      - "traefik.http.middlewares.sonarr-https-redirect.redirectscheme.scheme=https"
+      - "traefik.http.routers.sonarr.middlewares=sonarr-https-redirect"
+      - "traefik.http.routers.sonarr-secure.entrypoints=https"
+      - "traefik.http.routers.sonarr-secure.rule=Host(`sonarr.$DOMAIN`)"
+      - "traefik.http.routers.sonarr-secure.tls=true"
+      - "traefik.http.routers.sonarr-secure.service=sonarr"
+      - "traefik.http.services.sonarr.loadbalancer.server.port=8989"
+      - "traefik.docker.network=proxy"
+
+  radarr:
+    image: lscr.io/linuxserver/radarr:latest
+    container_name: radarr
+    environment:
+      - TZ=$TZ
+      - PUID=$PUID
+      - PGID=$PGID
+      - UMASK=22
+    # ports:
+    #   - 7878:7878 # port mapping
+    volumes:
+      - ./radarr:/config # config directory for radarr
+      - ./downloads:/downloads # completed downloads directory from sab
+      - $BIGVOL/movies:/movies # where radarr will copy your movies. add as many of these as you need
+      - $BIGVOL/malindamovies:/malindamovies
+      - $BIGVOL/forkids:/forkids
+      - $BIGVOL/others:/others
+    restart: $RESTART
+    networks:
+      - proxy
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.radarr.entrypoints=http"
+      - "traefik.http.routers.radarr.rule=Host(`radarr.$DOMAIN`)"
+      - "traefik.http.middlewares.radarr-https-redirect.redirectscheme.scheme=https"
+      - "traefik.http.routers.radarr.middlewares=radarr-https-redirect"
+      - "traefik.http.routers.radarr-secure.entrypoints=https"
+      - "traefik.http.routers.radarr-secure.rule=Host(`radarr.$DOMAIN`)"
+      - "traefik.http.routers.radarr-secure.tls=true"
+      - "traefik.http.routers.radarr-secure.service=radarr"
+      - "traefik.http.services.radarr.loadbalancer.server.port=7878"
+      - "traefik.docker.network=proxy"
+
+  syncthing:
+    image: lscr.io/linuxserver/syncthing
+    container_name: syncthing
+    hostname: $HOSTNAME
+    environment:
+      - TZ=$TZ
+      - PUID=$PUID
+      - PGID=$PGID
+    volumes:
+      - ./syncthing:/config
+      - $BIGVOL/others:/others
+      - $HOMEDIR:/homedir
+    # ports:
+    #   - 8384:8384
+    #   - 22000:22000
+    #   - 21027:21027
+    restart: $RESTART
+    network_mode: host
+    # labels:
+    #   - "traefik.enable=true"
+    #   - "traefik.http.routers.syncthing.entrypoints=http"
+    #   - "traefik.http.routers.syncthing.rule=Host(`sync.$DOMAIN`)"
+    #   - "traefik.http.middlewares.syncthing-https-redirect.redirectscheme.scheme=https"
+    #   - "traefik.http.routers.syncthing.middlewares=syncthing-https-redirect"
+    #   - "traefik.http.routers.syncthing-secure.entrypoints=https"
+    #   - "traefik.http.routers.syncthing-secure.rule=Host(`sync.$DOMAIN`)"
+    #   - "traefik.http.routers.syncthing-secure.tls=true"
+    #   - "traefik.http.routers.syncthing-secure.service=syncthing"
+    #   - "traefik.http.services.syncthing.loadbalancer.server.port=8384"
+    #   - "traefik.docker.network=proxy"
+
+  # addarr:
+  #   image: waterboy1602/addarr
+  #   container_name: addarr
+  #   network_mode: host
+  #   volumes:
+  #     - ./addarr/config.yaml:/app/config.yaml:ro
+  #     - ./addarr/chatid.txt:/app/chatid.txt:rw
+  #     - ./addarr/admin.txt:/app/admin.txt:ro
+  #     - ./addarr/allowlist.txt:/app/allowlist.txt:ro
+  #     - ./addarr/logs:/app/logs:rw
+  #   restart: $RESTART
+
+  openspeedtest:
+    image: openspeedtest/latest
+    container_name: openspeedtest
+    ports:
+      - 3000:3000
+      - 3001:3001
+    restart: $RESTART
+    networks:
+      - proxy
+
+  ariang:
+    image: hurlenko/aria2-ariang
+    container_name: ariang
+    environment:
+      - PUID=$PUID
+      - PGID=$PGID
+      - RPC_SECRET=m4xwhisp3rthal3r
+      - ARIA2RPCPORT=443
+    volumes:
+      - ./ariang:/aria2/conf
+      - $HOMEDIR:/homedir
+    # ports:
+    #   - 443:8080
+    restart: $RESTART
+    networks:
+      - proxy
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.ariang.entrypoints=http"
+      - "traefik.http.routers.ariang.rule=Host(`aria.$DOMAIN`)"
+      - "traefik.http.middlewares.ariang-https-redirect.redirectscheme.scheme=https"
+      - "traefik.http.routers.ariang.middlewares=ariang-https-redirect"
+      - "traefik.http.routers.ariang-secure.entrypoints=https"
+      - "traefik.http.routers.ariang-secure.rule=Host(`aria.$DOMAIN`)"
+      - "traefik.http.routers.ariang-secure.tls=true"
+      - "traefik.http.routers.ariang-secure.service=ariang"
+      - "traefik.http.services.ariang.loadbalancer.server.port=8080"
+      - "traefik.docker.network=proxy"
+    
+  jellyseerr:
+    image: fallenbagel/jellyseerr
+    container_name: jellyseerr
+    environment:
+      - LOG_LEVEL=debug
+      - TZ=$TZ
+    volumes:
+      - ./jellyseerr:/app/config
+      - $HOMEDIR:/homedir
+      - $BIGVOL:/bigvol
+    # ports:
+    #   - 5055:5055
+    restart: $RESTART
+    networks:
+      - proxy
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.jellyseerr.entrypoints=http"
+      - "traefik.http.routers.jellyseerr.rule=Host(`js.$DOMAIN`)"
+      - "traefik.http.middlewares.jellyseerr-https-redirect.redirectscheme.scheme=https"
+      - "traefik.http.routers.jellyseerr.middlewares=jellyseerr-https-redirect"
+      - "traefik.http.routers.jellyseerr-secure.entrypoints=https"
+      - "traefik.http.routers.jellyseerr-secure.rule=Host(`js.$DOMAIN`)"
+      - "traefik.http.routers.jellyseerr-secure.tls=true"
+      - "traefik.http.routers.jellyseerr-secure.service=jellyseerr"
+      - "traefik.http.services.jellyseerr.loadbalancer.server.port=5055"
+      - "traefik.docker.network=proxy"
