@@ -65,11 +65,7 @@ services:
       - ./jellyfin/cache:/cache
       - $CONFDIR/jf_transcode:/transcode
       - $HOMEDIR:/homedir
-      - $BIGVOL/movies:/movies
-      - $BIGVOL/tv:/tv
-      - $BIGVOL/forkids:/forkids
-      - $BIGVOL/others:/others
-      - $BIGVOL/forkidstv:/forkidstv
+      - $BIGVOL:/bigvol
     devices:
       - /dev/dri:/dev/dri #optional
     restart: $RESTART
@@ -113,12 +109,7 @@ services:
     volumes:
       - ./plex/database:/config
       - $CONFDIR/plex_transcode:/transcode
-      - $BIGVOL/movies:/movies
-      - $BIGVOL/tv:/tv
-      - $BIGVOL/malindamovies:/malindamovies
-      - $BIGVOL/forkids:/forkids
-      - $BIGVOL/others:/others
-      - $BIGVOL/forkidstv:/forkidstv
+      - $BIGVOL:/bigvol
     restart: $RESTART
 
   traefik:
