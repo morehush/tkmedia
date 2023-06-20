@@ -5,19 +5,19 @@ networks:
     external: true
 
 services:
-  watchtower:
-    image: containrrr/watchtower
-    container_name: watchtower
-    environment:
-      - TZ=$TZ
-      - WATCHTOWER_SCHEDULE=0 0 5 * * *
-      - WATCHTOWER_CLEANUP=false
-      - WATCHTOWER_NOTIFICATIONS=shoutrrr
-      - WATCHTOWER_NOTIFICATION_URL=telegram://$BOT_TOKEN@telegram/?channels=$CHAT_ID
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-    # command: --interval 30
-    restart: always
+  # watchtower:
+  #   image: containrrr/watchtower
+  #   container_name: watchtower
+  #   environment:
+  #     - TZ=$TZ
+  #     - WATCHTOWER_SCHEDULE=0 0 5 * * *
+  #     - WATCHTOWER_CLEANUP=false
+  #     - WATCHTOWER_NOTIFICATIONS=shoutrrr
+  #     - WATCHTOWER_NOTIFICATION_URL=telegram://$BOT_TOKEN@telegram/?channels=$CHAT_ID
+  #   volumes:
+  #     - /var/run/docker.sock:/var/run/docker.sock
+  #   # command: --interval 30
+  #   restart: always
 
   homepage:
     image: ghcr.io/benphelps/homepage:latest
