@@ -316,15 +316,15 @@ services:
   #     - ./addarr/logs:/app/logs:rw
   #   restart: $RESTART
 
-  openspeedtest:
-    image: openspeedtest/latest
-    container_name: openspeedtest
-    ports:
-      - 3000:3000
-      - 3001:3001
-    restart: $RESTART
-    networks:
-      - proxy
+  # openspeedtest:
+  #   image: openspeedtest/latest
+  #   container_name: openspeedtest
+  #   ports:
+  #     - 3000:3000
+  #     - 3001:3001
+  #   restart: $RESTART
+  #   networks:
+  #     - proxy
 
   ariang:
     image: hurlenko/aria2-ariang
