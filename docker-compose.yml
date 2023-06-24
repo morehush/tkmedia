@@ -11,7 +11,7 @@ services:
     environment:
       - TZ=$TZ
       - WATCHTOWER_SCHEDULE=0 0 5 * * *
-      - WATCHTOWER_CLEANUP=false
+      - WATCHTOWER_CLEANUP=true
       - WATCHTOWER_NOTIFICATIONS=shoutrrr
       - WATCHTOWER_NOTIFICATION_URL=telegram://$BOT_TOKEN@telegram/?channels=$CHAT_ID
     volumes:
