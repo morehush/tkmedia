@@ -47,7 +47,7 @@ services:
       - MYSQL_USER: 'npm'
       - MYSQL_PASSWORD: 'npm'
     volumes:
-      ./mariadb/mysql:/var/lib/mysql
+      - ./mariadb/mysql:/var/lib/mysql
     restart: $RESTART
 
   homepage:
