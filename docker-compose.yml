@@ -316,15 +316,27 @@ services:
   #     - ./addarr/logs:/app/logs:rw
   #   restart: $RESTART
 
-  # openspeedtest:
-  #   image: openspeedtest/latest
-  #   container_name: openspeedtest
-  #   ports:
-  #     - 3000:3000
-  #     - 3001:3001
-  #   restart: $RESTART
-  #   networks:
-  #     - proxy
+  openspeedtest:
+    image: openspeedtest/latest
+    container_name: openspeedtest
+    ports:
+      - 3000:3000
+      - 3001:3001
+    restart: $RESTART
+    networks:
+      - proxy
+    # labels:
+    #   - "traefik.enable=true"
+    #   - "traefik.http.routers.openspeedtest.entrypoints=http"
+    #   - "traefik.http.routers.openspeedtest.rule=Host(`speed.$DOMAIN`)"
+    #   - "traefik.http.middlewares.openspeedtest-https-redirect.redirectscheme.scheme=https"
+    #   - "traefik.http.routers.openspeedtest.middlewares=openspeedtest-https-redirect"
+    #   - "traefik.http.routers.openspeedtest-secure.entrypoints=https"
+    #   - "traefik.http.routers.openspeedtest-secure.rule=Host(`speed.$DOMAIN`)"
+    #   - "traefik.http.routers.openspeedtest-secure.tls=true"
+    #   - "traefik.http.routers.openspeedtest-secure.service=openspeedtest"
+    #   - "traefik.http.services.openspeedtest.loadbalancer.server.port=3000"
+    #   - "traefik.docker.network=proxy"
 
   ariang:
     image: hurlenko/aria2-ariang
@@ -355,30 +367,30 @@ services:
       - "traefik.http.services.ariang.loadbalancer.server.port=8080"
       - "traefik.docker.network=proxy"
     
-  jellyseerr:
-    image: fallenbagel/jellyseerr
-    container_name: jellyseerr
-    environment:
-      - LOG_LEVEL=debug
-      - TZ=$TZ
-    volumes:
-      - ./jellyseerr:/app/config
-      - $HOMEDIR:/homedir
-      - $BIGVOL:/bigvol
-    # ports:
-    #   - 5055:5055
-    restart: $RESTART
-    networks:
-      - proxy
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.jellyseerr.entrypoints=http"
-      - "traefik.http.routers.jellyseerr.rule=Host(`js.$DOMAIN`)"
-      - "traefik.http.middlewares.jellyseerr-https-redirect.redirectscheme.scheme=https"
-      - "traefik.http.routers.jellyseerr.middlewares=jellyseerr-https-redirect"
-      - "traefik.http.routers.jellyseerr-secure.entrypoints=https"
-      - "traefik.http.routers.jellyseerr-secure.rule=Host(`js.$DOMAIN`)"
-      - "traefik.http.routers.jellyseerr-secure.tls=true"
-      - "traefik.http.routers.jellyseerr-secure.service=jellyseerr"
-      - "traefik.http.services.jellyseerr.loadbalancer.server.port=5055"
-      - "traefik.docker.network=proxy"
+  # jellyseerr:
+  #   image: fallenbagel/jellyseerr
+  #   container_name: jellyseerr
+  #   environment:
+  #     - LOG_LEVEL=debug
+  #     - TZ=$TZ
+  #   volumes:
+  #     - ./jellyseerr:/app/config
+  #     - $HOMEDIR:/homedir
+  #     - $BIGVOL:/bigvol
+  #   # ports:
+  #   #   - 5055:5055
+  #   restart: $RESTART
+  #   networks:
+  #     - proxy
+  #   labels:
+  #     - "traefik.enable=true"
+  #     - "traefik.http.routers.jellyseerr.entrypoints=http"
+  #     - "traefik.http.routers.jellyseerr.rule=Host(`js.$DOMAIN`)"
+  #     - "traefik.http.middlewares.jellyseerr-https-redirect.redirectscheme.scheme=https"
+  #     - "traefik.http.routers.jellyseerr.middlewares=jellyseerr-https-redirect"
+  #     - "traefik.http.routers.jellyseerr-secure.entrypoints=https"
+  #     - "traefik.http.routers.jellyseerr-secure.rule=Host(`js.$DOMAIN`)"
+  #     - "traefik.http.routers.jellyseerr-secure.tls=true"
+  #     - "traefik.http.routers.jellyseerr-secure.service=jellyseerr"
+  #     - "traefik.http.services.jellyseerr.loadbalancer.server.port=5055"
+  #     - "traefik.docker.network=proxy"
