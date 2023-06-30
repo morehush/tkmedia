@@ -4,6 +4,9 @@ networks:
   proxy:
     external: true
 
+volumes:
+  cache:
+
 services:
   watchtower:
     image: containrrr/watchtower
@@ -63,7 +66,7 @@ services:
     volumes:
       - ./jellyfin:/config
       - ./jellyfin/cache:/cache
-      - $CONFDIR/jf_transcode:/transcode
+      - cache:/transcode
       - $HOMEDIR:/homedir
       - $BIGVOL:/bigvol
     devices:
@@ -108,7 +111,7 @@ services:
     #      - 32414:32414/udp
     volumes:
       - ./plex/database:/config
-      - $CONFDIR/plex_transcode:/transcode
+      - cache:/transcode
       - $BIGVOL:/bigvol
     restart: $RESTART
 
