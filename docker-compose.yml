@@ -1,11 +1,14 @@
 #sabnzbd, sonarr, radarr, plex, qbittorrent
 version: "3.3"
+
 networks:
   proxy:
     external: true
 
 volumes:
+  piped-proxy: null
   cache:
+
 
 services:
   watchtower:
@@ -397,3 +400,80 @@ services:
       - "traefik.http.routers.jellyseerr-secure.service=jellyseerr"
       - "traefik.http.services.jellyseerr.loadbalancer.server.port=5055"
       - "traefik.docker.network=proxy"
+
+  pipedfrontend:
+    image: 1337kavin/piped-frontend:latest
+    container_name: piped-frontend
+    entrypoint: ash -c 'sed -i s/pipedapi.kavin.rocks/papi.h.morehush.com/g /usr/share/nginx/html/assets/* && /docker-entrypoint.sh && nginx -g "daemon off;"'
+    depends_on:
+      - piped
+    restart: $RESTART
+    networks:
+      - proxy
+
+  piped-proxy:
+    image: 1337kavin/piped-proxy:latest
+    container_name: piped-proxy
+    environment:
+      - UDS=1
+    volumes:
+      - piped-proxy:/app/socket
+    restart: $RESTART
+    networks:
+      - proxy
+
+  piped:
+    image: 1337kavin/piped:latest
+    container_name: piped-backend
+    volumes:
+      - ./piped/config/config.properties:/app/config.properties:ro
+    depends_on:
+      - postgres
+    restart: $RESTART
+    networks:
+      - proxy
+
+  nginx:
+    image: nginx:mainline-alpine
+    container_name: nginx
+    # ports:
+    #  - "8080:80"
+    volumes:
+      - ./piped/config/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./piped/config/pipedapi.conf:/etc/nginx/conf.d/pipedapi.conf:ro
+      - ./piped/config/pipedproxy.conf:/etc/nginx/conf.d/pipedproxy.conf:ro
+      - ./piped/config/pipedfrontend.conf:/etc/nginx/conf.d/pipedfrontend.conf:ro
+      - ./piped/config/ytproxy.conf:/etc/nginx/snippets/ytproxy.conf:ro
+      - piped-proxy:/var/run/ytproxy
+    depends_on:
+      - piped
+      - piped-proxy
+      - pipedfrontend
+    restart: $RESTART
+    networks:
+      - proxy
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.nginx.entrypoints=http"
+      - "traefik.http.routers.nginx.rule=Host(`piped.$DOMAIN`,`papi.$DOMAIN`,`pproxy.$DOMAIN`)"
+      - "traefik.http.middlewares.nginx-https-redirect.redirectscheme.scheme=https"
+      - "traefik.http.routers.nginx.middlewares=nginx-https-redirect"
+      - "traefik.http.routers.nginx-secure.entrypoints=https"
+      - "traefik.http.routers.nginx-secure.rule=Host(`piped.$DOMAIN`,`papi.$DOMAIN`,`pproxy.$DOMAIN`)"
+      - "traefik.http.routers.nginx-secure.tls=true"
+      - "traefik.http.routers.nginx-secure.service=nginx"
+      - "traefik.http.services.nginx.loadbalancer.server.port=80"
+      - "traefik.docker.network=proxy"
+
+  postgres:
+    image: postgres:15
+    container_name: postgres
+    volumes:
+      - ./piped/data/db:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB=piped
+      - POSTGRES_USER=piped
+      - POSTGRES_PASSWORD=changeme
+    restart: $RESTART
+    networks:
+      - proxy
