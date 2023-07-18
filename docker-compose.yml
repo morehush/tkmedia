@@ -1,8 +1,11 @@
 #sabnzbd, sonarr, radarr, plex, qbittorrent
 version: "3.3"
 
+networks:
+  ngproxy:
+    external: true
+
 volumes:
-  piped-proxy: null
   cache:
 
 services:
@@ -26,6 +29,8 @@ services:
     depends_on:
       - mariadb
     restart: $RESTART
+    networks:
+      - ngproxy
 
   mariadb:
     image: jc21/mariadb-aria
@@ -38,6 +43,8 @@ services:
     volumes:
       - ./nginxpm/db:/var/lib/mysql
     restart: $RESTART
+    networks:
+      - ngproxy
   
   watchtower:
     image: containrrr/watchtower
@@ -63,6 +70,8 @@ services:
       - $BIGVOL:/sgt5tb
       - /var/run/docker.sock:/var/run/docker.sock # (optional) For docker integrations
     restart: $RESTART
+    networks:
+      - ngproxy
 
   jellyfin:
     image: lscr.io/linuxserver/jellyfin
@@ -89,6 +98,8 @@ services:
     devices:
       - /dev/dri:/dev/dri #optional
     restart: $RESTART
+    networks:
+      - ngproxy
 
   plex:
     image: plexinc/pms-docker
@@ -131,6 +142,8 @@ services:
       - ./prowlarr:/config
       - ./downloads:/downloads
     restart: $RESTART
+    networks:
+      - ngproxy
 
   sabnzbd:
     image: lscr.io/linuxserver/sabnzbd
@@ -147,6 +160,8 @@ services:
       - ./downloads/incomplete:/incomplete-downloads # temp directory for downloads
       - $BIGVOL/others:/others
     restart: $RESTART
+    networks:
+      - ngproxy
 
   sonarr:
     image: lscr.io/linuxserver/sonarr:develop
@@ -164,6 +179,8 @@ services:
       - $BIGVOL/tv:/tv # where it will copy your files when done. add as many of these as you need
       - $BIGVOL/forkidstv:/forkidstv
     restart: $RESTART
+    networks:
+      - ngproxy
 
   radarr:
     image: lscr.io/linuxserver/radarr:latest
@@ -183,6 +200,8 @@ services:
       - $BIGVOL/forkids:/forkids
       - $BIGVOL/others:/others
     restart: $RESTART
+    networks:
+      - ngproxy
 
   syncthing:
     image: lscr.io/linuxserver/syncthing
@@ -222,6 +241,8 @@ services:
       - 3000:3000
       - 3001:3001
     restart: $RESTART
+    networks:
+      - ngproxy
 
   ariang:
     image: hurlenko/aria2-ariang
@@ -237,6 +258,8 @@ services:
     # ports:
     #   - 443:8080
     restart: $RESTART
+    networks:
+      - ngproxy
     
   jellyseerr:
     image: fallenbagel/jellyseerr
@@ -251,58 +274,6 @@ services:
     # ports:
     #   - 5055:5055
     restart: $RESTART
+    networks:
+      - ngproxy
 
-  pipedfrontend:
-    image: 1337kavin/piped-frontend:latest
-    container_name: piped-frontend
-    entrypoint: ash -c 'sed -i s/pipedapi.kavin.rocks/papi.h.morehush.com/g /usr/share/nginx/html/assets/* && /docker-entrypoint.sh && nginx -g "daemon off;"'
-    depends_on:
-      - piped
-    restart: $RESTART
-
-  piped-proxy:
-    image: 1337kavin/piped-proxy:latest
-    container_name: piped-proxy
-    environment:
-      - UDS=1
-    volumes:
-      - piped-proxy:/app/socket
-    restart: $RESTART
-
-  piped:
-    image: 1337kavin/piped:latest
-    container_name: piped-backend
-    volumes:
-      - ./piped/config/config.properties:/app/config.properties:ro
-    depends_on:
-      - postgres
-    restart: $RESTART
-
-  nginx:
-    image: nginx:mainline-alpine
-    container_name: nginx
-    # ports:
-    #  - "8080:80"
-    volumes:
-      - ./piped/config/nginx.conf:/etc/nginx/nginx.conf:ro
-      - ./piped/config/pipedapi.conf:/etc/nginx/conf.d/pipedapi.conf:ro
-      - ./piped/config/pipedproxy.conf:/etc/nginx/conf.d/pipedproxy.conf:ro
-      - ./piped/config/pipedfrontend.conf:/etc/nginx/conf.d/pipedfrontend.conf:ro
-      - ./piped/config/ytproxy.conf:/etc/nginx/snippets/ytproxy.conf:ro
-      - piped-proxy:/var/run/ytproxy
-    depends_on:
-      - piped
-      - piped-proxy
-      - pipedfrontend
-    restart: $RESTART
-
-  postgres:
-    image: postgres:15
-    container_name: postgres
-    volumes:
-      - ./piped/data/db:/var/lib/postgresql/data
-    environment:
-      - POSTGRES_DB=piped
-      - POSTGRES_USER=piped
-      - POSTGRES_PASSWORD=changeme
-    restart: $RESTART
