@@ -9,7 +9,6 @@ volumes:
   piped-proxy: null
   cache:
 
-
 services:
   watchtower:
     image: containrrr/watchtower
