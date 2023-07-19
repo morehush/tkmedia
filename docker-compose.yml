@@ -2,50 +2,15 @@
 version: "3.3"
 
 networks:
-  ngproxy:
+  tproxy:
     external: true
 
 volumes:
+  piped-proxy: null
   cache:
 
-services:
-  nginxpm:
-    image: jc21/nginx-proxy-manager
-    container_name: nginxpm
-    environment:
-      DB_MYSQL_HOST: "mariadb"
-      DB_MYSQL_PORT: 3306
-      DB_MYSQL_USER: "npm"
-      DB_MYSQL_PASSWORD: "npm"
-      DB_MYSQL_NAME: "npm"
-      DISABLE_IPV6: 'true'
-    volumes:
-      - ./nginxpm/data:/data
-      - ./nginxpm/letsencrypt:/etc/letsencrypt
-    ports:
-      - 80:80
-      - 443:443
-      - 81:81
-    depends_on:
-      - mariadb
-    restart: $RESTART
-    networks:
-      - ngproxy
 
-  mariadb:
-    image: jc21/mariadb-aria
-    container_name: mariadb
-    environment:
-      MYSQL_ROOT_PASSWORD: 'npm'
-      MYSQL_DATABASE: 'npm'
-      MYSQL_USER: 'npm'
-      MYSQL_PASSWORD: 'npm'
-    volumes:
-      - ./nginxpm/db:/var/lib/mysql
-    restart: $RESTART
-    networks:
-      - ngproxy
-  
+services:
   watchtower:
     image: containrrr/watchtower
     container_name: watchtower
@@ -71,7 +36,19 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock # (optional) For docker integrations
     restart: $RESTART
     networks:
-      - ngproxy
+      - tproxy
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.homepage.entrypoints=http"
+      - "traefik.http.routers.homepage.rule=Host(`home.$DOMAIN`)"
+      - "traefik.http.middlewares.homepage-https-redirect.redirectscheme.scheme=https"
+      - "traefik.http.routers.homepage.middlewares=homepage-https-redirect"
+      - "traefik.http.routers.homepage-secure.entrypoints=https"
+      - "traefik.http.routers.homepage-secure.rule=Host(`home.$DOMAIN`)"
+      - "traefik.http.routers.homepage-secure.tls=true"
+      - "traefik.http.routers.homepage-secure.service=homepage"
+      - "traefik.http.services.homepage.loadbalancer.server.port=3000"
+      - "traefik.docker.network=tproxy"
 
   jellyfin:
     image: lscr.io/linuxserver/jellyfin
@@ -99,7 +76,19 @@ services:
       - /dev/dri:/dev/dri #optional
     restart: $RESTART
     networks:
-      - ngproxy
+      - tproxy
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.jellyfin.entrypoints=http"
+      - "traefik.http.routers.jellyfin.rule=Host(`jf.$DOMAIN`)"
+      - "traefik.http.middlewares.jellyfin-https-redirect.redirectscheme.scheme=https"
+      - "traefik.http.routers.jellyfin.middlewares=jellyfin-https-redirect"
+      - "traefik.http.routers.jellyfin-secure.entrypoints=https"
+      - "traefik.http.routers.jellyfin-secure.rule=Host(`jf.$DOMAIN`)"
+      - "traefik.http.routers.jellyfin-secure.tls=true"
+      - "traefik.http.routers.jellyfin-secure.service=jellyfin"
+      - "traefik.http.services.jellyfin.loadbalancer.server.port=8096"
+      - "traefik.docker.network=tproxy"
 
   plex:
     image: plexinc/pms-docker
@@ -129,6 +118,45 @@ services:
       - $BIGVOL:/bigvol
     restart: $RESTART
 
+  traefik:
+    image: traefik:latest
+    container_name: traefik
+    logging:
+      options:
+        max-size: "10m"
+        max-file: "3"
+    security_opt:
+      - no-new-privileges:true
+    networks:
+      - tproxy
+    ports:
+      - 80:80
+      - 443:443
+    environment:
+      - CF_API_EMAIL=$CFEMAIL
+      - CF_API_KEY=$CFAPIKEY
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ./traefik/data/traefik.yml:/traefik.yml:ro
+      - ./traefik/data/acme.json:/acme.json
+      - ./traefik/data/config.yml:/config.yml
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.traefik.entrypoints=http"
+      - "traefik.http.routers.traefik.rule=Host(`traefik.$DOMAIN`)"
+      - "traefik.http.middlewares.traefik-https-redirect.redirectscheme.scheme=https"
+      - "traefik.http.middlewares.sslheader.headers.customrequestheaders.X-Forwarded-Proto=https"
+      - "traefik.http.routers.traefik.middlewares=traefik-https-redirect"
+      - "traefik.http.routers.traefik-secure.entrypoints=https"
+      - "traefik.http.routers.traefik-secure.rule=Host(`traefik.$DOMAIN`)"
+      - "traefik.http.routers.traefik-secure.tls=true"
+      - "traefik.http.routers.traefik-secure.tls.certresolver=cloudflare"
+      - "traefik.http.routers.traefik-secure.tls.domains[0].main=$DOMAIN"
+      - "traefik.http.routers.traefik-secure.tls.domains[0].sans=*.$DOMAIN"
+      - "traefik.http.routers.traefik-secure.service=api@internal"
+    restart: $RESTART
+
   prowlarr:
     image: lscr.io/linuxserver/prowlarr:develop
     container_name: prowlarr
@@ -143,7 +171,19 @@ services:
       - ./downloads:/downloads
     restart: $RESTART
     networks:
-      - ngproxy
+      - tproxy
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.prowlarr.entrypoints=http"
+      - "traefik.http.routers.prowlarr.rule=Host(`p.$DOMAIN`)"
+      - "traefik.http.middlewares.prowlarr-https-redirect.redirectscheme.scheme=https"
+      - "traefik.http.routers.prowlarr.middlewares=prowlarr-https-redirect"
+      - "traefik.http.routers.prowlarr-secure.entrypoints=https"
+      - "traefik.http.routers.prowlarr-secure.rule=Host(`p.$DOMAIN`)"
+      - "traefik.http.routers.prowlarr-secure.tls=true"
+      - "traefik.http.routers.prowlarr-secure.service=prowlarr"
+      - "traefik.http.services.prowlarr.loadbalancer.server.port=9696"
+      - "traefik.docker.network=tproxy"
 
   sabnzbd:
     image: lscr.io/linuxserver/sabnzbd
@@ -161,7 +201,19 @@ services:
       - $BIGVOL/others:/others
     restart: $RESTART
     networks:
-      - ngproxy
+      - tproxy
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.sabnzbd.entrypoints=http"
+      - "traefik.http.routers.sabnzbd.rule=Host(`sab.$DOMAIN`)"
+      - "traefik.http.middlewares.sabnzbd-https-redirect.redirectscheme.scheme=https"
+      - "traefik.http.routers.sabnzbd.middlewares=sabnzbd-https-redirect"
+      - "traefik.http.routers.sabnzbd-secure.entrypoints=https"
+      - "traefik.http.routers.sabnzbd-secure.rule=Host(`sab.$DOMAIN`)"
+      - "traefik.http.routers.sabnzbd-secure.tls=true"
+      - "traefik.http.routers.sabnzbd-secure.service=sabnzbd"
+      - "traefik.http.services.sabnzbd.loadbalancer.server.port=8080"
+      - "traefik.docker.network=tproxy"
 
   sonarr:
     image: lscr.io/linuxserver/sonarr:develop
@@ -180,7 +232,19 @@ services:
       - $BIGVOL/forkidstv:/forkidstv
     restart: $RESTART
     networks:
-      - ngproxy
+      - tproxy
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.sonarr.entrypoints=http"
+      - "traefik.http.routers.sonarr.rule=Host(`sonarr.$DOMAIN`)"
+      - "traefik.http.middlewares.sonarr-https-redirect.redirectscheme.scheme=https"
+      - "traefik.http.routers.sonarr.middlewares=sonarr-https-redirect"
+      - "traefik.http.routers.sonarr-secure.entrypoints=https"
+      - "traefik.http.routers.sonarr-secure.rule=Host(`sonarr.$DOMAIN`)"
+      - "traefik.http.routers.sonarr-secure.tls=true"
+      - "traefik.http.routers.sonarr-secure.service=sonarr"
+      - "traefik.http.services.sonarr.loadbalancer.server.port=8989"
+      - "traefik.docker.network=tproxy"
 
   radarr:
     image: lscr.io/linuxserver/radarr:latest
@@ -201,7 +265,19 @@ services:
       - $BIGVOL/others:/others
     restart: $RESTART
     networks:
-      - ngproxy
+      - tproxy
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.radarr.entrypoints=http"
+      - "traefik.http.routers.radarr.rule=Host(`radarr.$DOMAIN`)"
+      - "traefik.http.middlewares.radarr-https-redirect.redirectscheme.scheme=https"
+      - "traefik.http.routers.radarr.middlewares=radarr-https-redirect"
+      - "traefik.http.routers.radarr-secure.entrypoints=https"
+      - "traefik.http.routers.radarr-secure.rule=Host(`radarr.$DOMAIN`)"
+      - "traefik.http.routers.radarr-secure.tls=true"
+      - "traefik.http.routers.radarr-secure.service=radarr"
+      - "traefik.http.services.radarr.loadbalancer.server.port=7878"
+      - "traefik.docker.network=tproxy"
 
   syncthing:
     image: lscr.io/linuxserver/syncthing
@@ -221,6 +297,18 @@ services:
     #   - 21027:21027
     restart: $RESTART
     network_mode: host
+    # labels:
+    #   - "traefik.enable=true"
+    #   - "traefik.http.routers.syncthing.entrypoints=http"
+    #   - "traefik.http.routers.syncthing.rule=Host(`sync.$DOMAIN`)"
+    #   - "traefik.http.middlewares.syncthing-https-redirect.redirectscheme.scheme=https"
+    #   - "traefik.http.routers.syncthing.middlewares=syncthing-https-redirect"
+    #   - "traefik.http.routers.syncthing-secure.entrypoints=https"
+    #   - "traefik.http.routers.syncthing-secure.rule=Host(`sync.$DOMAIN`)"
+    #   - "traefik.http.routers.syncthing-secure.tls=true"
+    #   - "traefik.http.routers.syncthing-secure.service=syncthing"
+    #   - "traefik.http.services.syncthing.loadbalancer.server.port=8384"
+    #   - "traefik.docker.network=tproxy"
 
   # addarr:
   #   image: waterboy1602/addarr
@@ -242,7 +330,19 @@ services:
       - 3001:3001
     restart: $RESTART
     networks:
-      - ngproxy
+      - tproxy
+    # labels:
+    #   - "traefik.enable=true"
+    #   - "traefik.http.routers.openspeedtest.entrypoints=http"
+    #   - "traefik.http.routers.openspeedtest.rule=Host(`speed.$DOMAIN`)"
+    #   - "traefik.http.middlewares.openspeedtest-https-redirect.redirectscheme.scheme=https"
+    #   - "traefik.http.routers.openspeedtest.middlewares=openspeedtest-https-redirect"
+    #   - "traefik.http.routers.openspeedtest-secure.entrypoints=https"
+    #   - "traefik.http.routers.openspeedtest-secure.rule=Host(`speed.$DOMAIN`)"
+    #   - "traefik.http.routers.openspeedtest-secure.tls=true"
+    #   - "traefik.http.routers.openspeedtest-secure.service=openspeedtest"
+    #   - "traefik.http.services.openspeedtest.loadbalancer.server.port=3000"
+    #   - "traefik.docker.network=tproxy"
 
   ariang:
     image: hurlenko/aria2-ariang
@@ -259,7 +359,19 @@ services:
     #   - 443:8080
     restart: $RESTART
     networks:
-      - ngproxy
+      - tproxy
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.ariang.entrypoints=http"
+      - "traefik.http.routers.ariang.rule=Host(`aria.$DOMAIN`)"
+      - "traefik.http.middlewares.ariang-https-redirect.redirectscheme.scheme=https"
+      - "traefik.http.routers.ariang.middlewares=ariang-https-redirect"
+      - "traefik.http.routers.ariang-secure.entrypoints=https"
+      - "traefik.http.routers.ariang-secure.rule=Host(`aria.$DOMAIN`)"
+      - "traefik.http.routers.ariang-secure.tls=true"
+      - "traefik.http.routers.ariang-secure.service=ariang"
+      - "traefik.http.services.ariang.loadbalancer.server.port=8080"
+      - "traefik.docker.network=tproxy"
     
   jellyseerr:
     image: fallenbagel/jellyseerr
@@ -275,5 +387,93 @@ services:
     #   - 5055:5055
     restart: $RESTART
     networks:
-      - ngproxy
+      - tproxy
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.jellyseerr.entrypoints=http"
+      - "traefik.http.routers.jellyseerr.rule=Host(`js.$DOMAIN`)"
+      - "traefik.http.middlewares.jellyseerr-https-redirect.redirectscheme.scheme=https"
+      - "traefik.http.routers.jellyseerr.middlewares=jellyseerr-https-redirect"
+      - "traefik.http.routers.jellyseerr-secure.entrypoints=https"
+      - "traefik.http.routers.jellyseerr-secure.rule=Host(`js.$DOMAIN`)"
+      - "traefik.http.routers.jellyseerr-secure.tls=true"
+      - "traefik.http.routers.jellyseerr-secure.service=jellyseerr"
+      - "traefik.http.services.jellyseerr.loadbalancer.server.port=5055"
+      - "traefik.docker.network=tproxy"
 
+  pipedfrontend:
+    image: 1337kavin/piped-frontend:latest
+    container_name: piped-frontend
+    entrypoint: ash -c 'sed -i s/pipedapi.kavin.rocks/papi.h.morehush.com/g /usr/share/nginx/html/assets/* && /docker-entrypoint.sh && nginx -g "daemon off;"'
+    depends_on:
+      - piped
+    restart: $RESTART
+    networks:
+      - tproxy
+
+  piped-proxy:
+    image: 1337kavin/piped-proxy:latest
+    container_name: piped-proxy
+    environment:
+      - UDS=1
+    volumes:
+      - piped-proxy:/app/socket
+    restart: $RESTART
+    networks:
+      - tproxy
+
+  piped:
+    image: 1337kavin/piped:latest
+    container_name: piped-backend
+    volumes:
+      - ./piped/config/config.properties:/app/config.properties:ro
+    depends_on:
+      - postgres
+    restart: $RESTART
+    networks:
+      - tproxy
+
+  nginx:
+    image: nginx:mainline-alpine
+    container_name: nginx
+    # ports:
+    #  - "8080:80"
+    volumes:
+      - ./piped/config/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./piped/config/pipedapi.conf:/etc/nginx/conf.d/pipedapi.conf:ro
+      - ./piped/config/pipedproxy.conf:/etc/nginx/conf.d/pipedproxy.conf:ro
+      - ./piped/config/pipedfrontend.conf:/etc/nginx/conf.d/pipedfrontend.conf:ro
+      - ./piped/config/ytproxy.conf:/etc/nginx/snippets/ytproxy.conf:ro
+      - piped-proxy:/var/run/ytproxy
+    depends_on:
+      - piped
+      - piped-proxy
+      - pipedfrontend
+    restart: $RESTART
+    networks:
+      - tproxy
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.nginx.entrypoints=http"
+      - "traefik.http.routers.nginx.rule=Host(`piped.$DOMAIN`,`papi.$DOMAIN`,`pproxy.$DOMAIN`)"
+      - "traefik.http.middlewares.nginx-https-redirect.redirectscheme.scheme=https"
+      - "traefik.http.routers.nginx.middlewares=nginx-https-redirect"
+      - "traefik.http.routers.nginx-secure.entrypoints=https"
+      - "traefik.http.routers.nginx-secure.rule=Host(`piped.$DOMAIN`,`papi.$DOMAIN`,`pproxy.$DOMAIN`)"
+      - "traefik.http.routers.nginx-secure.tls=true"
+      - "traefik.http.routers.nginx-secure.service=nginx"
+      - "traefik.http.services.nginx.loadbalancer.server.port=80"
+      - "traefik.docker.network=tproxy"
+
+  postgres:
+    image: postgres:15
+    container_name: postgres
+    volumes:
+      - ./piped/data/db:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB=piped
+      - POSTGRES_USER=piped
+      - POSTGRES_PASSWORD=changeme
+    restart: $RESTART
+    networks:
+      - tproxy
