@@ -17,7 +17,7 @@ services:
       - WATCHTOWER_SCHEDULE=0 0 5 * * *
       - WATCHTOWER_CLEANUP=true
       - WATCHTOWER_NOTIFICATIONS=shoutrrr
-      - WATCHTOWER_NOTIFICATION_URL=telegram://$BOT_TOKEN@telegram/?channels=$CHAT_ID
+      - WATCHTOWER_NOTIFICATION_URL=ntfy://ntfy.sh/mhdlnotif?title=Watchtower
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
     # command: --interval 30
@@ -335,18 +335,6 @@ services:
     #   - "traefik.http.routers.syncthing-secure.service=syncthing"
     #   - "traefik.http.services.syncthing.loadbalancer.server.port=8384"
     #   - "traefik.docker.network=tproxy"
-
-  # addarr:
-  #   image: waterboy1602/addarr
-  #   container_name: addarr
-  #   network_mode: host
-  #   volumes:
-  #     - ./addarr/config.yaml:/app/config.yaml:ro
-  #     - ./addarr/chatid.txt:/app/chatid.txt:rw
-  #     - ./addarr/admin.txt:/app/admin.txt:ro
-  #     - ./addarr/allowlist.txt:/app/allowlist.txt:ro
-  #     - ./addarr/logs:/app/logs:rw
-  #   restart: $RESTART
 
   openspeedtest:
     image: openspeedtest/latest
