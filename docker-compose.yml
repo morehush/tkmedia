@@ -451,7 +451,7 @@ services:
       - $BIGVOL/others/library:/books
     # ports:
     #   - 8083:8083
-    restart: unless-stopped
+    restart: $RESTART
     networks:
       - tproxy
     labels:
@@ -465,4 +465,32 @@ services:
       - "traefik.http.routers.calibre-secure.tls=true"
       - "traefik.http.routers.calibre-secure.service=calibre"
       - "traefik.http.services.calibre.loadbalancer.server.port=8083"
+      - "traefik.docker.network=tproxy"
+
+  filebrowser:
+    image: filebrowser/filebrowser:s6
+    container_name: filebrowser
+    environment:
+      - PUID=$PUID
+      - PGID=$PGID
+    volumes:
+      - $BIGVOL:/srv
+      - ./filebrowser/database/filebrowser.db:/database/filebrowser.db
+      - ./filebrowser/settings.json:/config/settings.json
+    # ports:
+    #   - 8080:80
+    restart: $RESTART
+    networks:
+      - tproxy
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.filebrowser.entrypoints=http"
+      - "traefik.http.routers.filebrowser.rule=Host(`fm.$DOMAIN`)"
+      - "traefik.http.middlewares.filebrowser-https-redirect.redirectscheme.scheme=https"
+      - "traefik.http.routers.filebrowser.middlewares=filebrowser-https-redirect"
+      - "traefik.http.routers.filebrowser-secure.entrypoints=https"
+      - "traefik.http.routers.filebrowser-secure.rule=Host(`fm.$DOMAIN`)"
+      - "traefik.http.routers.filebrowser-secure.tls=true"
+      - "traefik.http.routers.filebrowser-secure.service=filebrowser"
+      - "traefik.http.services.filebrowser.loadbalancer.server.port=80"
       - "traefik.docker.network=tproxy"
