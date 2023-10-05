@@ -415,35 +415,35 @@ services:
       - "traefik.http.services.jellyseerr.loadbalancer.server.port=5055"
       - "traefik.docker.network=tproxy"
 
-  # calibre-web:
-  #   image: lscr.io/linuxserver/calibre-web:nightly
-  #   container_name: calibre
-  #   environment:
-  #     - TZ=$TZ
-  #     - PUID=$PUID
-  #     - PGID=$PGID
-  #     - DOCKER_MODS=linuxserver/mods:universal-calibre #optional
-  #     - OAUTHLIB_RELAX_TOKEN_SCOPE=1 #optional
-  #   volumes:
-  #     - ./calibre-web:/config
-  #     - $BIGVOL/others/library:/books
-  #   # ports:
-  #   #   - 8083:8083
-  #   restart: $RESTART
-  #   networks:
-  #     - tproxy
-  #   labels:
-  #     - "traefik.enable=true"
-  #     - "traefik.http.routers.calibre.entrypoints=http"
-  #     - "traefik.http.routers.calibre.rule=Host(`calibre.$DOMAIN`)"
-  #     - "traefik.http.middlewares.calibre-https-redirect.redirectscheme.scheme=https"
-  #     - "traefik.http.routers.calibre.middlewares=calibre-https-redirect"
-  #     - "traefik.http.routers.calibre-secure.entrypoints=https"
-  #     - "traefik.http.routers.calibre-secure.rule=Host(`calibre.$DOMAIN`)"
-  #     - "traefik.http.routers.calibre-secure.tls=true"
-  #     - "traefik.http.routers.calibre-secure.service=calibre"
-  #     - "traefik.http.services.calibre.loadbalancer.server.port=8083"
-  #     - "traefik.docker.network=tproxy"
+  calibre-web:
+    image: lscr.io/linuxserver/calibre-web:nightly
+    container_name: calibre
+    environment:
+      - TZ=$TZ
+      - PUID=$PUID
+      - PGID=$PGID
+      - DOCKER_MODS=linuxserver/mods:universal-calibre #optional
+      - OAUTHLIB_RELAX_TOKEN_SCOPE=1 #optional
+    volumes:
+      - ./calibre-web:/config
+      - $BIGVOL/others/library:/books
+    # ports:
+    #   - 8083:8083
+    restart: $RESTART
+    networks:
+      - tproxy
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.calibre.entrypoints=http"
+      - "traefik.http.routers.calibre.rule=Host(`calibre.$DOMAIN`)"
+      - "traefik.http.middlewares.calibre-https-redirect.redirectscheme.scheme=https"
+      - "traefik.http.routers.calibre.middlewares=calibre-https-redirect"
+      - "traefik.http.routers.calibre-secure.entrypoints=https"
+      - "traefik.http.routers.calibre-secure.rule=Host(`calibre.$DOMAIN`)"
+      - "traefik.http.routers.calibre-secure.tls=true"
+      - "traefik.http.routers.calibre-secure.service=calibre"
+      - "traefik.http.services.calibre.loadbalancer.server.port=8083"
+      - "traefik.docker.network=tproxy"
 
   memos:
     image: ghcr.io/usememos/memos
