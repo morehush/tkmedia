@@ -335,28 +335,6 @@ services:
     #   - "traefik.http.services.syncthing.loadbalancer.server.port=8384"
     #   - "traefik.docker.network=tproxy"
 
-  openspeedtest:
-    image: openspeedtest/latest
-    container_name: openspeedtest
-    ports:
-      - 3000:3000
-      - 3001:3001
-    restart: $RESTART
-    networks:
-      - tproxy
-    # labels:
-    #   - "traefik.enable=true"
-    #   - "traefik.http.routers.openspeedtest.entrypoints=http"
-    #   - "traefik.http.routers.openspeedtest.rule=Host(`speed.$DOMAIN`)"
-    #   - "traefik.http.middlewares.openspeedtest-https-redirect.redirectscheme.scheme=https"
-    #   - "traefik.http.routers.openspeedtest.middlewares=openspeedtest-https-redirect"
-    #   - "traefik.http.routers.openspeedtest-secure.entrypoints=https"
-    #   - "traefik.http.routers.openspeedtest-secure.rule=Host(`speed.$DOMAIN`)"
-    #   - "traefik.http.routers.openspeedtest-secure.tls=true"
-    #   - "traefik.http.routers.openspeedtest-secure.service=openspeedtest"
-    #   - "traefik.http.services.openspeedtest.loadbalancer.server.port=3000"
-    #   - "traefik.docker.network=tproxy"
-
   ariang:
     image: hurlenko/aria2-ariang
     container_name: ariang
