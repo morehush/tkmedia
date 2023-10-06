@@ -1,4 +1,3 @@
-#sabnzbd, sonarr, radarr, plex, qbittorrent
 version: "3.3"
 
 networks:
