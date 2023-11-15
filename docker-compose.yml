@@ -299,7 +299,7 @@ services:
       - PGID=$PGID
     volumes:
       - ./syncthing:/config
-      - $BIGVOL/others:/others
+      - $SSD:/others
       - $HOMEDIR:/homedir
     # ports:
     #   - 8384:8384
