@@ -8,19 +8,22 @@ volumes:
   cache:
 
 services:
-  # watchtower:
-  #   image: containrrr/watchtower
-  #   container_name: watchtower
-  #   environment:
-  #     - TZ=$TZ
-  #     - WATCHTOWER_SCHEDULE=0 0 5 * * *
-  #     - WATCHTOWER_CLEANUP=true
-  #     - WATCHTOWER_NOTIFICATIONS=shoutrrr
-  #     - WATCHTOWER_NOTIFICATION_URL=telegram://$BOT_TOKEN@telegram/?channels=$CHAT_ID
-  #   volumes:
-  #     - /var/run/docker.sock:/var/run/docker.sock
-  #   # command: --interval 30
-  #   restart: always
+  watchtower:
+    image: containrrr/watchtower
+    container_name: watchtower
+    environment:
+      - TZ=$TZ
+      - WATCHTOWER_LABEL_ENABLE=true
+      - WATCHTOWER_SCHEDULE=0 0 5 * * *
+      - WATCHTOWER_CLEANUP=true
+      - WATCHTOWER_NOTIFICATIONS=shoutrrr
+      - WATCHTOWER_NOTIFICATION_URL=telegram://$BOT_TOKEN@telegram/?channels=$CHAT_ID
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    # command: --interval 30
+    restart: always
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
 
   homepage:
     image: ghcr.io/benphelps/homepage:latest
@@ -35,6 +38,7 @@ services:
     networks:
       - tproxy
     labels:
+      - "com.centurylinklabs.watchtower.enable=true"
       - "traefik.enable=true"
       - "traefik.http.routers.homepage-secure.entrypoints=https"
       - "traefik.http.routers.homepage-secure.rule=Host(`home.$DOMAIN`)"
@@ -71,6 +75,7 @@ services:
     networks:
       - tproxy
     labels:
+      - "com.centurylinklabs.watchtower.enable=true"
       - "traefik.enable=true"
       - "traefik.http.routers.jellyfin-secure.entrypoints=https"
       - "traefik.http.routers.jellyfin-secure.rule=Host(`jf.$DOMAIN`)"
@@ -106,6 +111,8 @@ services:
       - cache:/transcode
       - $BIGVOL:/bigvol
     restart: $RESTART
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
 
   traefik:
     image: traefik:latest
@@ -131,6 +138,7 @@ services:
       - ./traefik/data/acme.json:/acme.json
       - ./traefik/data/config.yml:/config.yml
     labels:
+      - "com.centurylinklabs.watchtower.enable=true"
       - "traefik.enable=true"
       - "traefik.http.routers.traefik.entrypoints=http"
       - "traefik.http.routers.traefik.rule=Host(`traefik.$DOMAIN`)"
@@ -162,6 +170,7 @@ services:
     networks:
       - tproxy
     labels:
+      - "com.centurylinklabs.watchtower.enable=true"
       - "traefik.enable=true"
       - "traefik.http.routers.prowlarr-secure.entrypoints=https"
       - "traefik.http.routers.prowlarr-secure.rule=Host(`p.$DOMAIN`)"
@@ -187,6 +196,7 @@ services:
     networks:
       - tproxy
     labels:
+      - "com.centurylinklabs.watchtower.enable=true"
       - "traefik.enable=true"
       - "traefik.http.routers.sabnzbd-secure.entrypoints=https"
       - "traefik.http.routers.sabnzbd-secure.rule=Host(`sab.$DOMAIN`)"
@@ -214,6 +224,7 @@ services:
     networks:
       - tproxy
     labels:
+      - "com.centurylinklabs.watchtower.enable=true"
       - "traefik.enable=true"
       - "traefik.http.routers.sonarr-secure.entrypoints=https"
       - "traefik.http.routers.sonarr-secure.rule=Host(`sonarr.$DOMAIN`)"
@@ -242,6 +253,7 @@ services:
     networks:
       - tproxy
     labels:
+      - "com.centurylinklabs.watchtower.enable=true"
       - "traefik.enable=true"
       - "traefik.http.routers.radarr-secure.entrypoints=https"
       - "traefik.http.routers.radarr-secure.rule=Host(`radarr.$DOMAIN`)"
@@ -268,6 +280,7 @@ services:
     networks:
       - tproxy
     labels:
+      - "com.centurylinklabs.watchtower.enable=true"
       - "traefik.enable=true"
       - "traefik.http.routers.bazarr-secure.entrypoints=https"
       - "traefik.http.routers.bazarr-secure.rule=Host(`bazarr.$DOMAIN`)"
@@ -294,7 +307,8 @@ services:
     #   - 21027:21027
     restart: $RESTART
     network_mode: host
-    # labels:
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
     #   - "traefik.enable=true"
     #   - "traefik.http.routers.syncthing-secure.entrypoints=https"
     #   - "traefik.http.routers.syncthing-secure.rule=Host(`sync.$DOMAIN`)"
@@ -320,6 +334,7 @@ services:
     networks:
       - tproxy
     labels:
+      - "com.centurylinklabs.watchtower.enable=true"
       - "traefik.enable=true"
       - "traefik.http.routers.ariang-secure.entrypoints=https"
       - "traefik.http.routers.ariang-secure.rule=Host(`aria.$DOMAIN`)"
@@ -344,6 +359,7 @@ services:
     networks:
       - tproxy
     labels:
+      - "com.centurylinklabs.watchtower.enable=true"
       - "traefik.enable=true"
       - "traefik.http.routers.jellyseerr-secure.entrypoints=https"
       - "traefik.http.routers.jellyseerr-secure.rule=Host(`js.$DOMAIN`)"
