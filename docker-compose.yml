@@ -82,6 +82,10 @@ services:
     labels:
       - "com.centurylinklabs.watchtower.enable=true"
       - "traefik.enable=true"
+      - "traefik.http.routers.homepage.entrypoints=http"
+      - "traefik.http.routers.homepage.rule=Host(`home.$DOMAIN`)"
+      - "traefik.http.middlewares.homepage-https-redirect.redirectscheme.scheme=https"
+      - "traefik.http.routers.homepage.middlewares=homepage-https-redirect"
       - "traefik.http.routers.homepage-secure.entrypoints=https"
       - "traefik.http.routers.homepage-secure.rule=Host(`home.$DOMAIN`)"
       - "traefik.http.routers.homepage-secure.tls=true"
@@ -119,6 +123,10 @@ services:
     labels:
       - "com.centurylinklabs.watchtower.enable=true"
       - "traefik.enable=true"
+      - "traefik.http.routers.jellyfin.entrypoints=http"
+      - "traefik.http.routers.jellyfin.rule=Host(`jf.$DOMAIN`)"
+      - "traefik.http.middlewares.jellyfin-https-redirect.redirectscheme.scheme=https"
+      - "traefik.http.routers.jellyfin.middlewares=jellyfin-https-redirect"
       - "traefik.http.routers.jellyfin-secure.entrypoints=https"
       - "traefik.http.routers.jellyfin-secure.rule=Host(`jf.$DOMAIN`)"
       - "traefik.http.routers.jellyfin-secure.tls=true"
@@ -174,6 +182,10 @@ services:
     labels:
       - "com.centurylinklabs.watchtower.enable=true"
       - "traefik.enable=true"
+      - "traefik.http.routers.prowlarr.entrypoints=http"
+      - "traefik.http.routers.prowlarr.rule=Host(`p.$DOMAIN`)"
+      - "traefik.http.middlewares.prowlarr-https-redirect.redirectscheme.scheme=https"
+      - "traefik.http.routers.prowlarr.middlewares=prowlarr-https-redirect"
       - "traefik.http.routers.prowlarr-secure.entrypoints=https"
       - "traefik.http.routers.prowlarr-secure.rule=Host(`p.$DOMAIN`)"
       - "traefik.http.routers.prowlarr-secure.tls=true"
@@ -200,6 +212,10 @@ services:
     labels:
       - "com.centurylinklabs.watchtower.enable=true"
       - "traefik.enable=true"
+      - "traefik.http.routers.sabnzbd.entrypoints=http"
+      - "traefik.http.routers.sabnzbd.rule=Host(`sab.$DOMAIN`)"
+      - "traefik.http.middlewares.sabnzbd-https-redirect.redirectscheme.scheme=https"
+      - "traefik.http.routers.sabnzbd.middlewares=sabnzbd-https-redirect"
       - "traefik.http.routers.sabnzbd-secure.entrypoints=https"
       - "traefik.http.routers.sabnzbd-secure.rule=Host(`sab.$DOMAIN`)"
       - "traefik.http.routers.sabnzbd-secure.tls=true"
@@ -228,6 +244,10 @@ services:
     labels:
       - "com.centurylinklabs.watchtower.enable=true"
       - "traefik.enable=true"
+      - "traefik.http.routers.sonarr.entrypoints=http"
+      - "traefik.http.routers.sonarr.rule=Host(`sonarr.$DOMAIN`)"
+      - "traefik.http.middlewares.sonarr-https-redirect.redirectscheme.scheme=https"
+      - "traefik.http.routers.sonarr.middlewares=sonarr-https-redirect"
       - "traefik.http.routers.sonarr-secure.entrypoints=https"
       - "traefik.http.routers.sonarr-secure.rule=Host(`sonarr.$DOMAIN`)"
       - "traefik.http.routers.sonarr-secure.tls=true"
@@ -257,6 +277,10 @@ services:
     labels:
       - "com.centurylinklabs.watchtower.enable=true"
       - "traefik.enable=true"
+      - "traefik.http.routers.radarr.entrypoints=http"
+      - "traefik.http.routers.radarr.rule=Host(`radarr.$DOMAIN`)"
+      - "traefik.http.middlewares.radarr-https-redirect.redirectscheme.scheme=https"
+      - "traefik.http.routers.radarr.middlewares=radarr-https-redirect"
       - "traefik.http.routers.radarr-secure.entrypoints=https"
       - "traefik.http.routers.radarr-secure.rule=Host(`radarr.$DOMAIN`)"
       - "traefik.http.routers.radarr-secure.tls=true"
@@ -284,6 +308,10 @@ services:
     labels:
       - "com.centurylinklabs.watchtower.enable=true"
       - "traefik.enable=true"
+      - "traefik.http.routers.bazarr.entrypoints=http"
+      - "traefik.http.routers.bazarr.rule=Host(`bazarr.$DOMAIN`)"
+      - "traefik.http.middlewares.bazarr-https-redirect.redirectscheme.scheme=https"
+      - "traefik.http.routers.bazarr.middlewares=bazarr-https-redirect"
       - "traefik.http.routers.bazarr-secure.entrypoints=https"
       - "traefik.http.routers.bazarr-secure.rule=Host(`bazarr.$DOMAIN`)"
       - "traefik.http.routers.bazarr-secure.tls=true"
@@ -312,6 +340,10 @@ services:
     labels:
       - "com.centurylinklabs.watchtower.enable=true"
     #   - "traefik.enable=true"
+    #  - "traefik.http.routers.syncthing.entrypoints=http"
+    #  - "traefik.http.routers.syncthing.rule=Host(`sync.$DOMAIN`)"
+    #  - "traefik.http.middlewares.syncthing-https-redirect.redirectscheme.scheme=https"
+    #  - "traefik.http.routers.syncthing.middlewares=syncthing-https-redirect"
     #   - "traefik.http.routers.syncthing-secure.entrypoints=https"
     #   - "traefik.http.routers.syncthing-secure.rule=Host(`sync.$DOMAIN`)"
     #   - "traefik.http.routers.syncthing-secure.tls=true"
@@ -338,6 +370,10 @@ services:
     labels:
       - "com.centurylinklabs.watchtower.enable=true"
       - "traefik.enable=true"
+      - "traefik.http.routers.ariang.entrypoints=http"
+      - "traefik.http.routers.ariang.rule=Host(`aria.$DOMAIN`)"
+      - "traefik.http.middlewares.ariang-https-redirect.redirectscheme.scheme=https"
+      - "traefik.http.routers.ariang.middlewares=ariang-https-redirect"
       - "traefik.http.routers.ariang-secure.entrypoints=https"
       - "traefik.http.routers.ariang-secure.rule=Host(`aria.$DOMAIN`)"
       - "traefik.http.routers.ariang-secure.tls=true"
@@ -363,9 +399,23 @@ services:
     labels:
       - "com.centurylinklabs.watchtower.enable=true"
       - "traefik.enable=true"
+      - "traefik.http.routers.jellyseerr.entrypoints=http"
+      - "traefik.http.routers.jellyseerr.rule=Host(`js.$DOMAIN`)"
+      - "traefik.http.middlewares.jellyseerr-https-redirect.redirectscheme.scheme=https"
+      - "traefik.http.routers.jellyseerr.middlewares=jellyseerr-https-redirect"
       - "traefik.http.routers.jellyseerr-secure.entrypoints=https"
       - "traefik.http.routers.jellyseerr-secure.rule=Host(`js.$DOMAIN`)"
       - "traefik.http.routers.jellyseerr-secure.tls=true"
       - "traefik.http.routers.jellyseerr-secure.service=jellyseerr"
       - "traefik.http.services.jellyseerr.loadbalancer.server.port=5055"
       - "traefik.docker.network=tproxy"
+
+  openspeedtest:
+    image: openspeedtest/latest
+    container_name: openspeedtest
+    ports:
+      - 3000:3000
+      - 3001:3001
+    restart: $RESTART
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
