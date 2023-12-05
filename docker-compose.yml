@@ -10,7 +10,7 @@ volumes:
 services:
 
   cloudflared:
-    image: 'cloudflare/cloudflared:latest'
+    image: cloudflare/cloudflared
     container_name: cloudflaretunnel
     environment:
       - TUNNEL_TOKEN=$CFTUNNELTOKEN
@@ -22,7 +22,7 @@ services:
       - "com.centurylinklabs.watchtower.enable=true"
 
   traefik:
-    image: traefik:latest
+    image: traefik
     container_name: traefik
     logging:
       options:
@@ -79,7 +79,7 @@ services:
       - "com.centurylinklabs.watchtower.enable=true"
 
   homepage:
-    image: ghcr.io/benphelps/homepage:latest
+    image: ghcr.io/benphelps/homepage
     container_name: homepage
     # ports:
     #   - 3000:3000
@@ -177,7 +177,7 @@ services:
       - "com.centurylinklabs.watchtower.enable=true"
 
   prowlarr:
-    image: lscr.io/linuxserver/prowlarr:develop
+    image: lscr.io/linuxserver/prowlarr
     container_name: prowlarr
     environment:
       - TZ=$TZ
@@ -268,7 +268,7 @@ services:
       - "traefik.docker.network=tproxy"
 
   radarr:
-    image: lscr.io/linuxserver/radarr:latest
+    image: lscr.io/linuxserver/radarr
     container_name: radarr
     environment:
       - TZ=$TZ
