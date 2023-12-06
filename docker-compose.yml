@@ -46,19 +46,23 @@ services:
       - ./traefik/data/config.yml:/config.yml
     labels:
       - "com.centurylinklabs.watchtower.enable=true"
+      # global redirect to https                                                  
+      - "traefik.http.routers.http-catchall.rule=hostregexp(`{host:.+}`)"       
+      - "traefik.http.routers.http-catchall.entrypoints=http"                    
+      - "traefik.http.routers.http-catchall.middlewares=redirect-to-https"
+      # middleware redirect                                                       
+      - "traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https"
+      - "traefik.http.middlewares.redirect-to-https.redirectscheme.permanent=true"
+      # the rest of it
       - "traefik.enable=true"
-      - "traefik.http.routers.traefik.entrypoints=http"
-      - "traefik.http.routers.traefik.rule=Host(`traefik.$DOMAIN`)"
-      - "traefik.http.middlewares.traefik-https-redirect.redirectscheme.scheme=https"
       - "traefik.http.middlewares.sslheader.headers.customrequestheaders.X-Forwarded-Proto=https"
-      - "traefik.http.routers.traefik.middlewares=traefik-https-redirect"
-      - "traefik.http.routers.traefik-secure.entrypoints=https"
-      - "traefik.http.routers.traefik-secure.rule=Host(`traefik.$DOMAIN`)"
-      - "traefik.http.routers.traefik-secure.tls=true"
-      - "traefik.http.routers.traefik-secure.tls.certresolver=cloudflare"
-      - "traefik.http.routers.traefik-secure.tls.domains[0].main=$DOMAIN"
-      - "traefik.http.routers.traefik-secure.tls.domains[0].sans=*.$DOMAIN"
-      - "traefik.http.routers.traefik-secure.service=api@internal"
+      - "traefik.http.routers.traefik.entrypoints=https"
+      - "traefik.http.routers.traefik.rule=Host(`traefik.$DOMAIN`)"
+      - "traefik.http.routers.traefik.tls=true"
+      - "traefik.http.routers.traefik.tls.certresolver=cloudflare"
+      - "traefik.http.routers.traefik.tls.domains[0].main=$DOMAIN"
+      - "traefik.http.routers.traefik.tls.domains[0].sans=*.$DOMAIN"
+      - "traefik.http.routers.traefik.service=api@internal"
     restart: $RESTART
 
   watchtower:
