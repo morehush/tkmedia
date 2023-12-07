@@ -79,6 +79,8 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
     # command: --interval 30
     restart: always
+    networks:
+      - tproxy
     labels:
       - "com.centurylinklabs.watchtower.enable=true"
 
@@ -113,7 +115,7 @@ services:
       - PGID=$PGID
       - TZ=$TZ
       - UMASK=22
-      - NVIDIA_VISIBLE_DEVICES=all
+      # - NVIDIA_VISIBLE_DEVICES=all
       - JELLYFIN_PublishedServerUrl=jf.$DOMAIN #optional
     # network_mode: host
     # ports:
@@ -393,5 +395,7 @@ services:
       - 3000:3000
       - 3001:3001
     restart: $RESTART
+    networks:
+      - tproxy
     labels:
       - "com.centurylinklabs.watchtower.enable=true"
