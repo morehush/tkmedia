@@ -75,10 +75,10 @@ services:
       - WATCHTOWER_SCHEDULE=0 0 5 * * *
       - WATCHTOWER_CLEANUP=true
       - WATCHTOWER_NOTIFICATIONS=shoutrrr
-      - WATCHTOWER_NOTIFICATION_URL=telegram://$BOT_TOKEN@telegram/?channels=$CHAT_ID
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
+      - WATCHTOWER_NOTIFICATION_URL=discord://$DISCORD_TOKEN@$DISCORD_ID
     # command: --interval 30
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
     restart: always
     networks:
       - tproxy
