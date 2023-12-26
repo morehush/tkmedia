@@ -92,7 +92,7 @@ services:
     #   - 3000:3000
     volumes:
       - ./homepage:/app/config
-      - $BIGVOL:/sgt5tb
+      - $WD8TB:/wd8tb
       - $SSD:/ssd
       - /var/run/docker.sock:/var/run/docker.sock # (optional) For docker integrations
     restart: $RESTART
@@ -129,7 +129,7 @@ services:
       - ./jellyfin/cache:/cache
       - cache:/transcode
       - $HOMEDIR:/homedir
-      - $BIGVOL:/bigvol
+      - $WD8TB:/shares
     devices:
       - /dev/dri:/dev/dri #optional
     restart: $RESTART
@@ -170,7 +170,7 @@ services:
     volumes:
       - ./plex/database:/config
       - cache:/transcode
-      - $BIGVOL:/bigvol
+      - $WD8TB:/shares
     restart: $RESTART
     labels:
       - "com.centurylinklabs.watchtower.enable=true"
@@ -239,8 +239,7 @@ services:
     volumes:
       - ./sonarr:/config # sonarr config dir
       - ./downloads:/downloads # your completed downloads directory from sab
-      - $BIGVOL/tv:/tv # where it will copy your files when done. add as many of these as you need
-      - $BIGVOL/forkidstv:/forkidstv
+      - $WD8TB:/shares
     restart: $RESTART
     networks:
       - tproxy
@@ -267,9 +266,7 @@ services:
     volumes:
       - ./radarr:/config # config directory for radarr
       - ./downloads:/downloads # completed downloads directory from sab
-      - $BIGVOL/movies:/movies # where radarr will copy your movies. add as many of these as you need
-      - $BIGVOL/malindamovies:/malindamovies
-      - $BIGVOL/forkids:/forkids
+      - $WD8TB:/shares
     restart: $RESTART
     networks:
       - tproxy
@@ -294,9 +291,7 @@ services:
     #   - 6767:6767
     volumes:
       - ./bazarr:/config
-      - $BIGVOL/movies:/movies
-      - $BIGVOL/malindamovies:/malindamovies
-      - $BIGVOL/forkids:/forkids
+      - $WD8TB:/shares
     restart: $RESTART
     networks:
       - tproxy
@@ -373,7 +368,7 @@ services:
     volumes:
       - ./jellyseerr:/app/config
       - $HOMEDIR:/homedir
-      - $BIGVOL:/bigvol
+      - $WD8TB:/shares
     # ports:
     #   - 5055:5055
     restart: $RESTART
