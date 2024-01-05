@@ -9,18 +9,6 @@ volumes:
 
 services:
 
-  cloudflared:
-    image: cloudflare/cloudflared
-    container_name: cloudflaretunnel
-    environment:
-      - TUNNEL_TOKEN=$CFTUNNELTOKEN
-    command: 'tunnel --no-autoupdate run'
-    restart: $RESTART
-    networks:
-      - tproxy
-    labels:
-      - "com.centurylinklabs.watchtower.enable=true"
-
   traefik:
     image: traefik
     container_name: traefik
