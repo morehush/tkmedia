@@ -390,3 +390,28 @@ services:
       - "traefik.http.routers.openspeedtest.tls=true"
       - "traefik.http.routers.openspeedtest.service=openspeedtest"
       - "traefik.http.services.openspeedtest.loadbalancer.server.port=3000"
+
+  kavita:
+    image: lscr.io/linuxserver/kavita
+    container_name: kavita
+    environment:
+      - PUID=$PUID
+      - PGID=$PGID
+      - TZ=$TZ
+    # ports:
+    #   - 5000:5000
+    volumes:
+      - ./kavita:/config
+      - $SSD/comics:/data
+    restart: $RESTART
+    networks:
+      - tproxy
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
+      - "traefik.enable=true"
+      - "traefik.docker.network=tproxy"
+      - "traefik.http.routers.kavita.entrypoints=https"
+      - "traefik.http.routers.kavita.rule=Host(`kavita.$DOMAIN`)"
+      - "traefik.http.routers.kavita.tls=true"
+      - "traefik.http.routers.kavita.service=kavita"
+      - "traefik.http.services.kavita.loadbalancer.server.port=5000"
