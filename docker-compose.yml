@@ -5,7 +5,7 @@ networks:
     external: true
 
 volumes:
-  cache:
+  cache: null
 
 services:
 
