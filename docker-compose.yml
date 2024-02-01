@@ -63,7 +63,7 @@ services:
       - WATCHTOWER_SCHEDULE=0 0 5 * * *
       - WATCHTOWER_CLEANUP=true
       - WATCHTOWER_NOTIFICATIONS=shoutrrr
-      - WATCHTOWER_NOTIFICATION_URL=discord://$DISCORD_TOKEN@$DISCORD_ID
+      - WATCHTOWER_NOTIFICATION_URL=ntfy://ntfy.sh/mhwtnotif?title=watchtower
     # command: --interval 30
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
