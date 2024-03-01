@@ -82,6 +82,7 @@ services:
       - ./homepage:/app/config
       - $WD8TB:/wd8tb
       - $SSD:/ssd
+      - $SGFIVE:/sgfive
       - /var/run/docker.sock:/var/run/docker.sock # (optional) For docker integrations
     restart: $RESTART
     networks:
@@ -118,6 +119,7 @@ services:
       - cache:/transcode
       - $HOMEDIR:/homedir
       - $WD8TB:/shares
+      - $SGFIVE:/sgfive
     devices:
       - /dev/dri:/dev/dri #optional
     restart: $RESTART
@@ -198,6 +200,7 @@ services:
       - ./sonarr:/config # sonarr config dir
       - ./downloads:/downloads # your completed downloads directory from sab
       - $WD8TB:/shares
+      - $SGFIVE:/sgfive
     restart: $RESTART
     networks:
       - revprox
@@ -225,6 +228,7 @@ services:
       - ./radarr:/config # config directory for radarr
       - ./downloads:/downloads # completed downloads directory from sab
       - $WD8TB:/shares
+      - $SGFIVE:/sgfive
     restart: $RESTART
     networks:
       - revprox
@@ -250,6 +254,7 @@ services:
     volumes:
       - ./bazarr:/config
       - $WD8TB:/shares
+      - $SGFIVE:/sgfive
     restart: $RESTART
     networks:
       - revprox
@@ -327,6 +332,7 @@ services:
       - ./jellyseerr:/app/config
       - $HOMEDIR:/homedir
       - $WD8TB:/shares
+      - $SGFIVE:/sgfive
     # ports:
     #   - 5055:5055
     restart: $RESTART
