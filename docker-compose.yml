@@ -291,32 +291,6 @@ services:
     #   - traefik.http.routers.syncthing.service=syncthing
     #   - traefik.http.services.syncthing.loadbalancer.server.port=8384
 
-  ariang:
-    image: hurlenko/aria2-ariang
-    container_name: ariang
-    environment:
-      - PUID=$PUID
-      - PGID=$PGID
-      - RPC_SECRET=$RPC_SECRET
-      - ARIA2RPCPORT=443
-    volumes:
-      - ./ariang:/aria2/conf
-      - $HOMEDIR:/homedir
-    # ports:
-    #   - 443:8080
-    restart: $RESTART
-    networks:
-      - revprox
-    labels:
-      - com.centurylinklabs.watchtower.enable=true
-      - traefik.enable=true
-      - traefik.docker.network=revprox
-      - traefik.http.routers.ariang.entrypoints=https
-      - traefik.http.routers.ariang.rule=Host(`aria.$DOMAIN`)
-      - traefik.http.routers.ariang.tls=true
-      - traefik.http.routers.ariang.service=ariang
-      - traefik.http.services.ariang.loadbalancer.server.port=8080
-    
   jellyseerr:
     image: fallenbagel/jellyseerr
     container_name: jellyseerr
