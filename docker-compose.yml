@@ -289,34 +289,6 @@ services:
       - traefik.http.routers.bazarr.service=bazarr
       - traefik.http.services.bazarr.loadbalancer.server.port=6767
 
-  syncthing:
-    image: lscr.io/linuxserver/syncthing
-    container_name: syncthing
-    hostname: $HOSTNAME
-    environment:
-      - TZ=$TZ
-      - PUID=$PUID
-      - PGID=$PGID
-    volumes:
-      - ./syncthing:/config
-      - $SSD:/others
-      - $HOMEDIR:/homedir
-    # ports:
-    #   - 8384:8384
-    #   - 22000:22000
-    #   - 21027:21027
-    restart: $RESTART
-    network_mode: host
-    labels:
-      - com.centurylinklabs.watchtower.enable=true
-    #   - traefik.enable=true
-    #   - traefik.docker.network=revprox
-    #   - traefik.http.routers.syncthing.entrypoints=https
-    #   - traefik.http.routers.syncthing.rule=Host(`sync.$DOMAIN`)
-    #   - traefik.http.routers.syncthing.tls=true
-    #   - traefik.http.routers.syncthing.service=syncthing
-    #   - traefik.http.services.syncthing.loadbalancer.server.port=8384
-
   jellyseerr:
     image: fallenbagel/jellyseerr
     container_name: jellyseerr
