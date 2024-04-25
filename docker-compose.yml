@@ -97,30 +97,6 @@ services:
       - traefik.http.routers.tilde.tls=true
       - traefik.http.routers.tilde.service=tilde
       - traefik.http.services.tilde.loadbalancer.server.port=80
-    
-
-  # homepage:
-  #   image: ghcr.io/benphelps/homepage
-  #   container_name: homepage
-  #   # ports:
-  #   #   - 3000:3000
-  #   volumes:
-  #     - ./homepage:/app/config
-  #     - $WD8TB:/wd8tb
-  #     - $SSD:/ssd
-  #     - /var/run/docker.sock:/var/run/docker.sock # (optional) For docker integrations
-  #   restart: $RESTART
-  #   networks:
-  #     - revprox
-  #   labels:
-  #     - com.centurylinklabs.watchtower.enable=true
-  #     - traefik.enable=true
-  #     - traefik.docker.network=revprox
-  #     - traefik.http.routers.homepage.entrypoints=https
-  #     - traefik.http.routers.homepage.rule=Host(`home.$DOMAIN`)
-  #     - traefik.http.routers.homepage.tls=true
-  #     - traefik.http.routers.homepage.service=homepage
-  #     - traefik.http.services.homepage.loadbalancer.server.port=3000
 
   jellyfin:
     image: lscr.io/linuxserver/jellyfin
