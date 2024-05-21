@@ -74,14 +74,14 @@ services:
       - com.centurylinklabs.watchtower.enable=true
 
   tilde:
-    image: lscr.io/linuxserver/nginx
+    image: caddy
     container_name: tilde
-    environment:
-      - PUID=$PUID
-      - PGID=$PGID
-      - TZ=$TZ
     volumes:
       - ./tilde/config:/config
+      - ./tilde/caddy:/etc/caddy
+      - ./tilde/srv:/srv
+      - ./tilde/caddy_data:/data
+      - ./tilde/caddy_config:/config
     # ports:
     #   - 80:80
     #   - 443:443
