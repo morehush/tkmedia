@@ -73,31 +73,6 @@ services:
     labels:
       - com.centurylinklabs.watchtower.enable=true
 
-  tilde:
-    image: caddy
-    container_name: tilde
-    volumes:
-      - ./tilde/config:/config
-      - ./tilde/caddy:/etc/caddy
-      - ./tilde/srv:/srv
-      - ./tilde/caddy_data:/data
-      - ./tilde/caddy_config:/config
-    # ports:
-    #   - 80:80
-    #   - 443:443
-    restart: $RESTART
-    networks:
-      - revprox
-    labels:
-      - com.centurylinklabs.watchtower.enable=true
-      - traefik.enable=true
-      - traefik.docker.network=revprox
-      - traefik.http.routers.tilde.entrypoints=https
-      - traefik.http.routers.tilde.rule=Host(`home.$DOMAIN`)
-      - traefik.http.routers.tilde.tls=true
-      - traefik.http.routers.tilde.service=tilde
-      - traefik.http.services.tilde.loadbalancer.server.port=80
-
   jellyfin:
     image: lscr.io/linuxserver/jellyfin
     container_name: jellyfin
