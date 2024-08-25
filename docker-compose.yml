@@ -63,7 +63,8 @@ services:
       - WATCHTOWER_SCHEDULE=0 0 5 * * *
       - WATCHTOWER_CLEANUP=true
       - WATCHTOWER_NOTIFICATIONS=shoutrrr
-      - WATCHTOWER_NOTIFICATION_URL=telegram://$BOT_TOKEN@telegram?chats=$CHAT_ID
+      - WATCHTOWER_NOTIFICATIONS_SKIP_TITLE=True
+      - WATCHTOWER_NOTIFICATION_URL=ntfy://ntfy.sh/$NTFYTOPIC?title=WatchtowerUpdates
     # command: --interval 30
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
