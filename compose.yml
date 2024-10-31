@@ -294,6 +294,33 @@ services:
       - traefik.http.routers.jellyseerr.service=jellyseerr
       - traefik.http.services.jellyseerr.loadbalancer.server.port=5055
 
+  calibre:
+    image: lscr.io/linuxserver/calibre-web:latest
+    container_name: calibre-web
+    environment:
+      - PUID=$PUID
+      - PGID=$PGID
+      - TZ=$TZ
+      - DOCKER_MODS=linuxserver/mods:universal-calibre #optional
+      - OAUTHLIB_RELAX_TOKEN_SCOPE=1 #optional
+    volumes:
+      - ./config:/config
+      - $SSD/library:/books
+    # ports:
+    #   - 8083:8083
+    restart: $RESTART
+    networks:
+      - revprox
+    labels:
+      - com.centurylinklabs.watchtower.enable=true
+      - traefik.enable=true
+      - traefik.docker.network=revprox
+      - traefik.http.routers.calibre.entrypoints=https
+      - traefik.http.routers.calibre.rule=Host(`calibre.$DOMAIN`)
+      - traefik.http.routers.calibre.tls=true
+      - traefik.http.routers.calibre.service=calibre
+      - traefik.http.services.calibre.loadbalancer.server.port=8083
+
   openspeedtest:
     image: openspeedtest/latest
     container_name: openspeedtest
