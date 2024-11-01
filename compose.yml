@@ -304,22 +304,22 @@ services:
       - DOCKER_MODS=linuxserver/mods:universal-calibre #optional
       - OAUTHLIB_RELAX_TOKEN_SCOPE=1 #optional
     volumes:
-      - ./config:/config
+      - ./calibre/config:/config
       - $SSD/library:/books
-    # ports:
-    #   - 8083:8083
+    ports:
+      - 8083:8083
     restart: $RESTART
     networks:
       - revprox
     labels:
       - com.centurylinklabs.watchtower.enable=true
-      - traefik.enable=true
-      - traefik.docker.network=revprox
-      - traefik.http.routers.calibre.entrypoints=https
-      - traefik.http.routers.calibre.rule=Host(`calibre.$DOMAIN`)
-      - traefik.http.routers.calibre.tls=true
-      - traefik.http.routers.calibre.service=calibre
-      - traefik.http.services.calibre.loadbalancer.server.port=8083
+      # - traefik.enable=true
+      # - traefik.docker.network=revprox
+      # - traefik.http.routers.calibre.entrypoints=https
+      # - traefik.http.routers.calibre.rule=Host(`calibre.$DOMAIN`)
+      # - traefik.http.routers.calibre.tls=true
+      # - traefik.http.routers.calibre.service=calibre
+      # - traefik.http.services.calibre.loadbalancer.server.port=8083
 
   openspeedtest:
     image: openspeedtest/latest
