@@ -296,7 +296,7 @@ services:
 
   calibre:
     image: lscr.io/linuxserver/calibre-web:latest
-    container_name: calibre-web
+    container_name: calibre
     environment:
       - PUID=$PUID
       - PGID=$PGID
