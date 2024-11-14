@@ -339,3 +339,25 @@ services:
       - traefik.http.routers.openspeedtest.tls=true
       - traefik.http.routers.openspeedtest.service=openspeedtest
       - traefik.http.services.openspeedtest.loadbalancer.server.port=3000
+
+  # glance:
+  #   image: glanceapp/glance
+  #   container_name: glance
+  #   # ports:
+  #   #   - 8080:8080
+  #   volumes:
+  #     - ./glance/glance.yml:/app/glance.yml
+  #     - /etc/timezone:/etc/timezone:ro
+  #     - /etc/localtime:/etc/localtime:ro
+  #   restart: $RESTART
+  #   networks:
+  #     - revprox
+  #   labels:
+  #     - com.centurylinklabs.watchtower.enable=true
+  #     - traefik.enable=true
+  #     - traefik.docker.network=revprox
+  #     - traefik.http.routers.glance.entrypoints=https
+  #     - traefik.http.routers.glance.rule=Host(`glance.$DOMAIN`)
+  #     - traefik.http.routers.glance.tls=true
+  #     - traefik.http.routers.glance.service=glance
+  #     - traefik.http.services.glance.loadbalancer.server.port=8080
