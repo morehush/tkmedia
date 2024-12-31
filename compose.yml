@@ -96,6 +96,7 @@ services:
       - cache:/transcode
       - $HOMEDIR:/homedir
       - $WD8TB:/shares
+      - $SSD:/ssd
     devices:
       - /dev/dri:/dev/dri #optional
     restart: $RESTART
@@ -311,3 +312,27 @@ services:
       - traefik.http.routers.openspeedtest.tls=true
       - traefik.http.routers.openspeedtest.service=openspeedtest
       - traefik.http.services.openspeedtest.loadbalancer.server.port=3000
+
+  pinchflat:
+    image: ghcr.io/kieraneglin/pinchflat:latest
+    container_name: pinchflat
+    user: '1000:100'
+    environment:
+      - TZ=$TZ
+    # ports:
+    #   - 8945:8945
+    volumes:
+      - ./pinchflat:/config
+      - $SSD/Videos/youtube:/downloads
+    restart: $RESTART
+    networks:
+      - revprox
+    labels:
+      - com.centurylinklabs.watchtower.enable=true
+      - traefik.enable=true
+      - traefik.docker.network=revprox
+      - traefik.http.routers.pinchflat.entrypoints=https
+      - traefik.http.routers.pinchflat.rule=Host(`pinchflat.$DOMAIN`)
+      - traefik.http.routers.pinchflat.tls=true
+      - traefik.http.routers.pinchflat.service=pinchflat
+      - traefik.http.services.pinchflat.loadbalancer.server.port=8945
