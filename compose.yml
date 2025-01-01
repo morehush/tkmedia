@@ -336,3 +336,37 @@ services:
       - traefik.http.routers.pinchflat.tls=true
       - traefik.http.routers.pinchflat.service=pinchflat
       - traefik.http.services.pinchflat.loadbalancer.server.port=8945
+
+  beszel:
+    image: henrygd/beszel
+    container_name: beszel
+    ports:
+      - 8090:8090
+    volumes:
+      - ./beszel_data:/beszel_data
+    extra_hosts:
+      - host.docker.internal:host-gateway
+    restart: $RESTART
+    networks:
+      - revprox
+    labels:
+      - com.centurylinklabs.watchtower.enable=true
+      - traefik.enable=true
+      - traefik.docker.network=revprox
+      - traefik.http.routers.beszel.entrypoints=https
+      - traefik.http.routers.beszel.rule=Host(`beszel.$DOMAIN`)
+      - traefik.http.routers.beszel.tls=true
+      - traefik.http.routers.beszel.service=beszel
+      - traefik.http.services.beszel.loadbalancer.server.port=8090
+
+  beszel-agent:
+    image: henrygd/beszel-agent:latest
+    container_name: beszel-agent
+    restart: unless-stopped
+    network_mode: host
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    environment:
+      PORT: 45876
+      # Do not remove quotes around the key
+      KEY: 'ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIIrQQywcTALbSrVTG9NcHmQTlufiSQ5RX/0l6/OYs9ur'
