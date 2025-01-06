@@ -294,25 +294,6 @@ services:
       # - traefik.http.routers.calibre.service=calibre
       # - traefik.http.services.calibre.loadbalancer.server.port=8083
 
-  openspeedtest:
-    image: openspeedtest/latest
-    container_name: openspeedtest
-    # ports:
-    #   - 3000:3000
-    #   - 3001:3001
-    restart: $RESTART
-    networks:
-      - revprox
-    labels:
-      - com.centurylinklabs.watchtower.enable=true
-      - traefik.enable=true
-      - traefik.docker.network=revprox
-      - traefik.http.routers.openspeedtest.entrypoints=https
-      - traefik.http.routers.openspeedtest.rule=Host(`speed.$DOMAIN`)
-      - traefik.http.routers.openspeedtest.tls=true
-      - traefik.http.routers.openspeedtest.service=openspeedtest
-      - traefik.http.services.openspeedtest.loadbalancer.server.port=3000
-
   pinchflat:
     image: ghcr.io/kieraneglin/pinchflat:latest
     container_name: pinchflat
