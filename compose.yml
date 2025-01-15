@@ -64,7 +64,7 @@ services:
       - WATCHTOWER_CLEANUP=true
       - WATCHTOWER_NOTIFICATIONS=shoutrrr
       - WATCHTOWER_NOTIFICATIONS_SKIP_TITLE=True
-      - WATCHTOWER_NOTIFICATION_URL=ntfy://ntfy.sh/$NTFYTOPIC?title=WatchtowerUpdates
+      - WATCHTOWER_NOTIFICATION_URL=discord://$DTOKEN@$DCHANNEL
     # command: --interval 30
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
