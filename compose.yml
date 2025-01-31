@@ -86,12 +86,11 @@ services:
     restart: $RESTART
     labels:
       - com.centurylinklabs.watchtower.enable=true
-      - proxy.aliases=p
-      - proxy.p.port=9696
+      - proxy.prowlarr.port=9696
 
   sabnzbd:
     image: lscr.io/linuxserver/sabnzbd
-    container_name: sabnzbd
+    container_name: sab
     environment:
       - TZ=$TZ
       - PUID=$PUID
@@ -105,7 +104,6 @@ services:
     restart: $RESTART
     labels:
       - com.centurylinklabs.watchtower.enable=true
-      - proxy.aliases=sab
       - proxy.sab.port=8080
 
   sonarr:
