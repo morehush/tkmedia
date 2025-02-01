@@ -217,8 +217,8 @@ services:
   beszel:
     image: henrygd/beszel
     container_name: beszel
-    ports:
-      - 8090:8090
+    # ports:
+    #   - 8090:8090
     volumes:
       - ./beszel_data:/beszel_data
     extra_hosts:
