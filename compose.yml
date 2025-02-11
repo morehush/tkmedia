@@ -144,23 +144,6 @@ services:
       - com.centurylinklabs.watchtower.enable=true
       - proxy.radarr.port=7878
 
-  bazarr:
-    image: lscr.io/linuxserver/bazarr
-    container_name: bazarr
-    environment:
-      - TZ=$TZ
-      - PUID=$PUID
-      - PGID=$PGID
-    # ports:
-    #   - 6767:6767
-    volumes:
-      - ./bazarr:/config
-      - $WD8TB:/shares
-    restart: $RESTART
-    labels:
-      - com.centurylinklabs.watchtower.enable=true
-      - proxy.bazarr.port=6767
-
   jellyseerr:
     image: fallenbagel/jellyseerr
     container_name: jellyseerr
