@@ -21,6 +21,21 @@ services:
       - proxy.aliases=home
       - proxy.home.port=3000
 
+  # glance:
+  #   container_name: glance
+  #   image: glanceapp/glance
+  #   volumes:
+  #     - ./glance/config:/app/config
+  #     - ./glance/assets:/app/assets
+  #     - /var/run/docker.sock:/var/run/docker.sock:ro
+  #   # ports:
+  #   #   - 8080:8080
+  #   restart: unless-stopped
+  #   labels:
+  #     - com.centurylinklabs.watchtower.enable=true
+  #     - proxy.aliases=glance
+  #     - proxy.glance.port=8080
+
   watchtower:
     image: containrrr/watchtower
     container_name: watchtower
