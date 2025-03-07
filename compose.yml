@@ -21,20 +21,20 @@ services:
       - proxy.aliases=home
       - proxy.home.port=3000
 
-  # glance:
-  #   container_name: glance
-  #   image: glanceapp/glance
-  #   volumes:
-  #     - ./glance/config:/app/config
-  #     - ./glance/assets:/app/assets
-  #     - /var/run/docker.sock:/var/run/docker.sock:ro
-  #   # ports:
-  #   #   - 8080:8080
-  #   restart: unless-stopped
-  #   labels:
-  #     - com.centurylinklabs.watchtower.enable=true
-  #     - proxy.aliases=glance
-  #     - proxy.glance.port=8080
+  glance:
+    container_name: glance
+    image: glanceapp/glance
+    volumes:
+      - ./glance/config:/app/config
+      - ./glance/assets:/app/assets
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    # ports:
+    #   - 8080:8080
+    restart: unless-stopped
+    labels:
+      - com.centurylinklabs.watchtower.enable=true
+      - proxy.aliases=glance
+      - proxy.glance.port=8080
 
   watchtower:
     image: containrrr/watchtower
@@ -240,3 +240,14 @@ services:
     labels:
       - com.centurylinklabs.watchtower.enable=true
       - proxy.exclude=true
+
+  termix:
+    image: ghcr.io/lukegus/termix
+    container_name: termix
+    # ports:
+    #   - 8080:8080 # Port for nginx web-app (frontend)
+    #   - 8081:8081 # Port for SSH WebSocket, does not need to be open (backend)
+    restart: $RESTART
+    labels:
+      - com.centurylinklabs.watchtower.enable=true
+      - proxy.termix.port=8080
