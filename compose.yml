@@ -240,14 +240,3 @@ services:
     labels:
       - com.centurylinklabs.watchtower.enable=true
       - proxy.exclude=true
-
-  termix:
-    image: ghcr.io/lukegus/termix
-    container_name: termix
-    # ports:
-    #   - 8080:8080 # Port for nginx web-app (frontend)
-    #   - 8081:8081 # Port for SSH WebSocket, does not need to be open (backend)
-    restart: $RESTART
-    labels:
-      - com.centurylinklabs.watchtower.enable=true
-      - proxy.termix.port=8080
