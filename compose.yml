@@ -19,7 +19,6 @@ services:
       HOMEPAGE_ALLOWED_HOSTS: home.$DOMAIN
     restart: unless-stopped
     labels:
-      - com.centurylinklabs.watchtower.enable=true
       - proxy.aliases=home
       - proxy.home.port=3000
 
@@ -34,28 +33,8 @@ services:
     #   - 8080:8080
     restart: unless-stopped
     labels:
-      - com.centurylinklabs.watchtower.enable=true
       - proxy.aliases=glance
       - proxy.glance.port=8080
-
-  watchtower:
-    image: containrrr/watchtower
-    container_name: watchtower
-    environment:
-      - TZ=$TZ
-      - WATCHTOWER_LABEL_ENABLE=true
-      - WATCHTOWER_SCHEDULE=0 0 5 * * *
-      - WATCHTOWER_CLEANUP=true
-      - WATCHTOWER_NOTIFICATIONS=shoutrrr
-      - WATCHTOWER_NOTIFICATIONS_SKIP_TITLE=True
-      - WATCHTOWER_NOTIFICATION_URL=discord://$DTOKEN@$DCHANNEL
-    # command: --interval 30
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock:ro
-    restart: always
-    labels:
-      - com.centurylinklabs.watchtower.enable=true
-      - proxy.exclude=true
 
   jellyfin:
     image: lscr.io/linuxserver/jellyfin
@@ -84,7 +63,6 @@ services:
       - /dev/dri:/dev/dri #optional
     restart: $RESTART
     labels:
-      - com.centurylinklabs.watchtower.enable=true
       - proxy.aliases=jf
       - proxy.jf.port=8096
 
@@ -102,7 +80,6 @@ services:
       - ./downloads:/downloads
     restart: $RESTART
     labels:
-      - com.centurylinklabs.watchtower.enable=true
       - proxy.prowlarr.port=9696
 
   sabnzbd:
@@ -120,7 +97,6 @@ services:
       - ./downloads/incomplete:/incomplete-downloads # temp directory for downloads
     restart: $RESTART
     labels:
-      - com.centurylinklabs.watchtower.enable=true
       - proxy.sab.port=8080
 
   sonarr:
@@ -139,7 +115,6 @@ services:
       - $WD8TB:/shares
     restart: $RESTART
     labels:
-      - com.centurylinklabs.watchtower.enable=true
       - proxy.sonarr.port=8989
 
   radarr:
@@ -158,8 +133,20 @@ services:
       - $WD8TB:/shares
     restart: $RESTART
     labels:
-      - com.centurylinklabs.watchtower.enable=true
       - proxy.radarr.port=7878
+
+  profilarr:
+    image: santiagosayshey/profilarr
+    container_name: profilarr
+    environment:
+      - TZ=$TZ
+    # ports:
+    #   - 6868:6868
+    volumes:
+      - ./profilarr:/config
+    restart: $RESTART
+    labels:
+      - proxy.profilarr.port=6868
 
   jellyseerr:
     image: fallenbagel/jellyseerr
@@ -175,7 +162,6 @@ services:
     #   - 5055:5055
     restart: $RESTART
     labels:
-      - com.centurylinklabs.watchtower.enable=true
       - proxy.aliases=js
       - proxy.js.port=5055
 
@@ -195,7 +181,6 @@ services:
       - 8083:8083
     restart: $RESTART
     labels:
-      - com.centurylinklabs.watchtower.enable=true
       - proxy.calibre.port=8083
 
   pinchflat:
@@ -211,7 +196,6 @@ services:
       - $SSD/Videos/youtube:/downloads
     restart: $RESTART
     labels:
-      - com.centurylinklabs.watchtower.enable=true
       - proxy.pinchflat.port=8945
 
   beszel:
@@ -225,7 +209,6 @@ services:
       - host.docker.internal:host-gateway
     restart: $RESTART
     labels:
-      - com.centurylinklabs.watchtower.enable=true
       - proxy.beszel.port=8090
 
   beszel-agent:
@@ -240,5 +223,4 @@ services:
       KEY: 'ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIIrQQywcTALbSrVTG9NcHmQTlufiSQ5RX/0l6/OYs9ur'
     restart: $RESTART
     labels:
-      - com.centurylinklabs.watchtower.enable=true
       - proxy.exclude=true
