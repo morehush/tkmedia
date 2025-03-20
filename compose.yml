@@ -61,10 +61,21 @@ services:
       - $SSD:/ssd
     devices:
       - /dev/dri:/dev/dri #optional
-    restart: $RESTART
+    restart: unless-stopped
     labels:
       - proxy.aliases=jf
       - proxy.jf.port=8096
+
+  # fladder:
+  #   image: ghcr.io/donutware/fladder
+  #   container_name: fladder
+  #   environment:
+  #     - BASE_URL=https://jf.h.morehush.com
+  #   # ports:
+  #   #   - 80:80
+  #   restart: unless-stopped
+  #   labels:
+  #     - proxy.fladder.port=80
 
   prowlarr:
     image: lscr.io/linuxserver/prowlarr
@@ -78,7 +89,7 @@ services:
     volumes:
       - ./prowlarr:/config
       - ./downloads:/downloads
-    restart: $RESTART
+    restart: unless-stopped
     labels:
       - proxy.prowlarr.port=9696
 
@@ -95,7 +106,7 @@ services:
       - ./sabnzbd/config:/config # sab config directory
       - ./downloads:/downloads # completed directory for downloads. this contains the category directories
       - ./downloads/incomplete:/incomplete-downloads # temp directory for downloads
-    restart: $RESTART
+    restart: unless-stopped
     labels:
       - proxy.sab.port=8080
 
@@ -113,7 +124,7 @@ services:
       - ./sonarr:/config # sonarr config dir
       - ./downloads:/downloads # your completed downloads directory from sab
       - $WD8TB:/shares
-    restart: $RESTART
+    restart: unless-stopped
     labels:
       - proxy.sonarr.port=8989
 
@@ -131,7 +142,7 @@ services:
       - ./radarr:/config # config directory for radarr
       - ./downloads:/downloads # completed downloads directory from sab
       - $WD8TB:/shares
-    restart: $RESTART
+    restart: unless-stopped
     labels:
       - proxy.radarr.port=7878
 
@@ -144,7 +155,7 @@ services:
     #   - 6868:6868
     volumes:
       - ./profilarr:/config
-    restart: $RESTART
+    restart: unless-stopped
     labels:
       - proxy.profilarr.port=6868
 
@@ -160,7 +171,7 @@ services:
       - $WD8TB:/shares
     # ports:
     #   - 5055:5055
-    restart: $RESTART
+    restart: unless-stopped
     labels:
       - proxy.aliases=js
       - proxy.js.port=5055
@@ -179,7 +190,7 @@ services:
       - $SSD/library:/books
     ports:
       - 8083:8083
-    restart: $RESTART
+    restart: unless-stopped
     labels:
       - proxy.calibre.port=8083
 
@@ -194,7 +205,7 @@ services:
     volumes:
       - ./pinchflat:/config
       - $SSD/Videos/youtube:/downloads
-    restart: $RESTART
+    restart: unless-stopped
     labels:
       - proxy.pinchflat.port=8945
 
@@ -207,7 +218,7 @@ services:
       - ./beszel_data:/beszel_data
     extra_hosts:
       - host.docker.internal:host-gateway
-    restart: $RESTART
+    restart: unless-stopped
     labels:
       - proxy.beszel.port=8090
 
@@ -221,6 +232,6 @@ services:
       PORT: 45876
       # Do not remove quotes around the key
       KEY: 'ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIIrQQywcTALbSrVTG9NcHmQTlufiSQ5RX/0l6/OYs9ur'
-    restart: $RESTART
+    restart: unless-stopped
     labels:
       - proxy.exclude=true
