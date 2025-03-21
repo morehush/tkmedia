@@ -66,16 +66,16 @@ services:
       - proxy.aliases=jf
       - proxy.jf.port=8096
 
-  # fladder:
-  #   image: ghcr.io/donutware/fladder
-  #   container_name: fladder
-  #   environment:
-  #     - BASE_URL=https://jf.h.morehush.com
-  #   # ports:
-  #   #   - 80:80
-  #   restart: unless-stopped
-  #   labels:
-  #     - proxy.fladder.port=80
+  fladder:
+    image: ghcr.io/donutware/fladder
+    container_name: fladder
+    environment:
+      - BASE_URL=https://jf.h.morehush.com
+    # ports:
+    #   - 80:80
+    restart: unless-stopped
+    labels:
+      - proxy.fladder.port=80
 
   prowlarr:
     image: lscr.io/linuxserver/prowlarr
