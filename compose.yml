@@ -21,9 +21,10 @@ services:
     labels:
       proxy.aliases: home
       proxy.home.port: 3000
+      glance.hide: true
       glance.name: Homepage
       glance.url: https://home.$DOMAIN
-      glance.icon: sh:homepage
+      glance.icon: di:homepage
       glance.description: A page for self-hosted and other services
 
   glance:
@@ -39,9 +40,10 @@ services:
     labels:
       proxy.aliases: glance
       proxy.glance.port: 8080
+      glance.hide: true
       glance.name: Glance
       glance.url: https://glance.$DOMAIN
-      glance.icon: sh:glance
+      glance.icon: di:glance
       glance.description: Dashboard
 
   jellyfin:
@@ -75,7 +77,7 @@ services:
       proxy.jf.port: 8096
       glance.name: Jellyfin
       glance.url: https://jf.$DOMAIN
-      glance.icon: sh:jellyfin
+      glance.icon: di:jellyfin
       glance.description: Media Server
 
   fladder:
@@ -90,7 +92,7 @@ services:
       proxy.fladder.port: 80
       glance.name: Fladder
       glance.url: https://fladder.$DOMAIN
-      glance.icon: sh:fladder
+      glance.icon: di:fladder
       glance.description: Alternative UI for Jellyfin
 
   prowlarr:
@@ -110,7 +112,7 @@ services:
       proxy.prowlarr.port: 9696
       glance.name: Prowlarr
       glance.url: https://prowlarr.$DOMAIN
-      glance.icon: sh:prowlarr
+      glance.icon: di:prowlarr
       glance.description: ARR config
 
   sabnzbd:
@@ -131,7 +133,7 @@ services:
       proxy.sab.port: 8080
       glance.name: Sabnzbd
       glance.url: https://sab.$DOMAIN
-      glance.icon: sh:sabnzbd
+      glance.icon: di:sabnzbd
       glance.description: Usenet Downloader
 
   sonarr:
@@ -153,7 +155,7 @@ services:
       proxy.sonarr.port: 8989
       glance.name: Sonarr
       glance.url: https://sonarr.$DOMAIN/wanted/missing
-      glance.icon: sh:sonarr
+      glance.icon: di:sonarr
       glance.description: TV Shows
 
   radarr:
@@ -175,7 +177,7 @@ services:
       proxy.radarr.port: 7878
       glance.name: Radarr
       glance.url: https://radarr.$DOMAIN/calendar
-      glance.icon: sh:radarr
+      glance.icon: di:radarr
       glance.description: Movies
 
   profilarr:
@@ -192,7 +194,7 @@ services:
       proxy.profilarr.port: 6868
       glance.name: Profilarr
       glance.url: https://profilarr.$DOMAIN
-      glance.icon: sh:profilarr
+      glance.icon: di:profilarr
       glance.description: Quality Profile sync
 
   jellyseerr:
@@ -213,7 +215,7 @@ services:
       proxy.js.port: 5055
       glance.name: Jellyseerr
       glance.url: https://js.$DOMAIN
-      glance.icon: sh:jellyseerr
+      glance.icon: di:jellyseerr
       glance.description: Add Movies and TV Shows to auatomation
 
   calibre:
@@ -235,7 +237,7 @@ services:
       proxy.calibre.port: 8083
       glance.name: Calibre
       glance.url: https://calibre.$DOMAIN
-      glance.icon: sh:calibre
+      glance.icon: di:calibre
       glance.description: Ebooks
 
   pinchflat:
@@ -254,7 +256,7 @@ services:
       proxy.pinchflat.port: 8945
       glance.name: Pinchflat
       glance.url: https://pinchflat.$DOMAIN
-      glance.icon: sh:youtube
+      glance.icon: di:youtube
       glance.description: Youtube Downloads
 
   beszel:
@@ -271,7 +273,7 @@ services:
       proxy.beszel.port: 8090
       glance.name: Beszel
       glance.url: https://beszel.$DOMAIN/system/omv
-      glance.icon: sh:beszel
+      glance.icon: di:beszel
       glance.description: System Monitor
       glance.id: beszel
 
