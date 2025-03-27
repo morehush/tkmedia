@@ -19,8 +19,12 @@ services:
       HOMEPAGE_ALLOWED_HOSTS: home.$DOMAIN
     restart: unless-stopped
     labels:
-      - proxy.aliases=home
-      - proxy.home.port=3000
+      proxy.aliases: home
+      proxy.home.port: 3000
+      glance.name: Homepage
+      glance.url: https://home.$DOMAIN
+      glance.icon: sh:homepage
+      glance.description: A page for self-hosted and other services
 
   glance:
     container_name: glance
@@ -33,8 +37,12 @@ services:
     #   - 8080:8080
     restart: unless-stopped
     labels:
-      - proxy.aliases=glance
-      - proxy.glance.port=8080
+      proxy.aliases: glance
+      proxy.glance.port: 8080
+      glance.name: Glance
+      glance.url: https://glance.$DOMAIN
+      glance.icon: sh:glance
+      glance.description: Dashboard
 
   jellyfin:
     image: lscr.io/linuxserver/jellyfin
@@ -63,8 +71,12 @@ services:
       - /dev/dri:/dev/dri #optional
     restart: unless-stopped
     labels:
-      - proxy.aliases=jf
-      - proxy.jf.port=8096
+      proxy.aliases: jf
+      proxy.jf.port: 8096
+      glance.name: Jellyfin
+      glance.url: https://jf.$DOMAIN
+      glance.icon: sh:jellyfin
+      glance.description: Media Server
 
   fladder:
     image: ghcr.io/donutware/fladder
@@ -75,7 +87,11 @@ services:
     #   - 80:80
     restart: unless-stopped
     labels:
-      - proxy.fladder.port=80
+      proxy.fladder.port: 80
+      glance.name: Fladder
+      glance.url: https://fladder.$DOMAIN
+      glance.icon: sh:fladder
+      glance.description: Alternative UI for Jellyfin
 
   prowlarr:
     image: lscr.io/linuxserver/prowlarr
@@ -91,7 +107,11 @@ services:
       - ./downloads:/downloads
     restart: unless-stopped
     labels:
-      - proxy.prowlarr.port=9696
+      proxy.prowlarr.port: 9696
+      glance.name: Prowlarr
+      glance.url: https://prowlarr.$DOMAIN
+      glance.icon: sh:prowlarr
+      glance.description: ARR config
 
   sabnzbd:
     image: lscr.io/linuxserver/sabnzbd
@@ -108,7 +128,11 @@ services:
       - ./downloads/incomplete:/incomplete-downloads # temp directory for downloads
     restart: unless-stopped
     labels:
-      - proxy.sab.port=8080
+      proxy.sab.port: 8080
+      glance.name: Sabnzbd
+      glance.url: https://sab.$DOMAIN
+      glance.icon: sh:sabnzbd
+      glance.description: Usenet Downloader
 
   sonarr:
     image: lscr.io/linuxserver/sonarr
@@ -126,7 +150,11 @@ services:
       - $WD8TB:/shares
     restart: unless-stopped
     labels:
-      - proxy.sonarr.port=8989
+      proxy.sonarr.port: 8989
+      glance.name: Sonarr
+      glance.url: https://sonarr.$DOMAIN/wanted/missing
+      glance.icon: sh:sonarr
+      glance.description: TV Shows
 
   radarr:
     image: lscr.io/linuxserver/radarr
@@ -144,7 +172,11 @@ services:
       - $WD8TB:/shares
     restart: unless-stopped
     labels:
-      - proxy.radarr.port=7878
+      proxy.radarr.port: 7878
+      glance.name: Radarr
+      glance.url: https://radarr.$DOMAIN/calendar
+      glance.icon: sh:radarr
+      glance.description: Movies
 
   profilarr:
     image: santiagosayshey/profilarr
@@ -157,7 +189,11 @@ services:
       - ./profilarr:/config
     restart: unless-stopped
     labels:
-      - proxy.profilarr.port=6868
+      proxy.profilarr.port: 6868
+      glance.name: Profilarr
+      glance.url: https://profilarr.$DOMAIN
+      glance.icon: sh:profilarr
+      glance.description: Quality Profile sync
 
   jellyseerr:
     image: fallenbagel/jellyseerr
@@ -173,8 +209,12 @@ services:
     #   - 5055:5055
     restart: unless-stopped
     labels:
-      - proxy.aliases=js
-      - proxy.js.port=5055
+      proxy.aliases: js
+      proxy.js.port: 5055
+      glance.name: Jellyseerr
+      glance.url: https://js.$DOMAIN
+      glance.icon: sh:jellyseerr
+      glance.description: Add Movies and TV Shows to auatomation
 
   calibre:
     image: lscr.io/linuxserver/calibre-web:latest
@@ -192,7 +232,11 @@ services:
       - 8083:8083
     restart: unless-stopped
     labels:
-      - proxy.calibre.port=8083
+      proxy.calibre.port: 8083
+      glance.name: Calibre
+      glance.url: https://calibre.$DOMAIN
+      glance.icon: sh:calibre
+      glance.description: Ebooks
 
   pinchflat:
     image: ghcr.io/kieraneglin/pinchflat:latest
@@ -207,7 +251,11 @@ services:
       - $SSD/Videos/youtube:/downloads
     restart: unless-stopped
     labels:
-      - proxy.pinchflat.port=8945
+      proxy.pinchflat.port: 8945
+      glance.name: Pinchflat
+      glance.url: https://pinchflat.$DOMAIN
+      glance.icon: sh:youtube
+      glance.description: Youtube Downloads
 
   beszel:
     image: henrygd/beszel
@@ -220,7 +268,12 @@ services:
       - host.docker.internal:host-gateway
     restart: unless-stopped
     labels:
-      - proxy.beszel.port=8090
+      proxy.beszel.port: 8090
+      glance.name: Beszel
+      glance.url: https://beszel.$DOMAIN/system/omv
+      glance.icon: sh:beszel
+      glance.description: System Monitor
+      glance.id: beszel
 
   beszel-agent:
     image: henrygd/beszel-agent:latest
@@ -234,4 +287,6 @@ services:
       KEY: 'ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIIrQQywcTALbSrVTG9NcHmQTlufiSQ5RX/0l6/OYs9ur'
     restart: unless-stopped
     labels:
-      - proxy.exclude=true
+      proxy.exclude: true
+      glance.name: agent
+      glance.parent: beszel
