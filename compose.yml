@@ -21,7 +21,6 @@ services:
     labels:
       proxy.aliases: home
       proxy.home.port: 3000
-      glance.hide: true
       glance.name: Homepage
       glance.url: https://home.$DOMAIN
       glance.icon: di:homepage
