@@ -55,6 +55,7 @@ services:
       - PGID=$PGID
       - TZ=$TZ
       - UMASK=22
+      - MALLOC_TRIM_THRESHOLD_=100000
       # - NVIDIA_VISIBLE_DEVICES=all
       # - JELLYFIN_PublishedServerUrl=jf.$DOMAIN #optional
     # network_mode: host
