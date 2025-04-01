@@ -16,23 +16,23 @@ services:
     #   - 3000:3000
     volumes:
       - ./homepage:/app/config
-      - $WD8TB:/wd8tb
-      - $SSD:/ssd
+      - ${WD8TB}:/wd8tb
+      - ${SSD}:/ssd
       - /var/run/docker.sock:/var/run/docker.sock # (optional) For docker integrations
     environment:
-      HOMEPAGE_ALLOWED_HOSTS: home.$DOMAIN
+      HOMEPAGE_ALLOWED_HOSTS: home.${DOMAIN}
     restart: unless-stopped
     networks:
       - revproxy
     labels:
       - traefik.enable=true
       - traefik.http.routers.homepage.entrypoints=websecure
-      - traefik.http.routers.homepage.rule=Host(`home.$DOMAIN`)
+      - traefik.http.routers.homepage.rule=Host(`home.${DOMAIN}`)
       - traefik.http.routers.homepage.tls=true
       - traefik.http.routers.homepage.service=homepage
       - traefik.http.services.homepage.loadbalancer.server.port=3000  
       - glance.name=Homepage
-      - glance.url=https://home.$DOMAIN
+      - glance.url=https://home.${DOMAIN}
       - glance.icon=di:homepage
       - glance.description=A page for self-hosted and other services
 
@@ -40,7 +40,7 @@ services:
     container_name: glance
     image: glanceapp/glance
     environment:
-      - GITHUB_TOKEN=$GITHUB_TOKEN
+      - GITHUB_TOKEN=${GITHUB_TOKEN}
     volumes:
       - ./glance/config:/app/config
       - ./glance/assets:/app/assets
@@ -53,13 +53,13 @@ services:
     labels:
       - traefik.enable=true
       - traefik.http.routers.glance.entrypoints=websecure
-      - traefik.http.routers.glance.rule=Host(`glance.$DOMAIN`)
+      - traefik.http.routers.glance.rule=Host(`glance.${DOMAIN}`)
       - traefik.http.routers.glance.tls=true
       - traefik.http.routers.glance.service=glance
       - traefik.http.services.glance.loadbalancer.server.port=8080  
       - glance.hide=true
       - glance.name=Glance
-      - glance.url=https://glance.$DOMAIN
+      - glance.url=https://glance.${DOMAIN}
       - glance.icon=di:glance
       - glance.description=Dashboard
 
@@ -67,13 +67,13 @@ services:
     image: lscr.io/linuxserver/jellyfin
     container_name: jellyfin
     environment:
-      - PUID=$PUID
-      - PGID=$PGID
-      - TZ=$TZ
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
       - UMASK=22
       - MALLOC_TRIM_THRESHOLD_=100000
       # - NVIDIA_VISIBLE_DEVICES=all
-      # - JELLYFIN_PublishedServerUrl=jf.$DOMAIN #optional
+      # - JELLYFIN_PublishedServerUrl=jf.${DOMAIN} #optional
     # network_mode: host
     ports:
       - 8096:8096
@@ -84,9 +84,9 @@ services:
       - ./jellyfin:/config
       - ./jellyfin/cache:/cache
       - cache:/transcode
-      - $HOMEDIR:/homedir
-      - $WD8TB:/shares
-      - $SSD:/ssd
+      - ${HOMEDIR}:/homedir
+      - ${WD8TB}:/shares
+      - ${SSD}:/ssd
     devices:
       - /dev/dri:/dev/dri #optional
     restart: unless-stopped
@@ -96,12 +96,12 @@ services:
       - traefik.enable=true
       - traefik.docker.network=revproxy
       - traefik.http.routers.jellyfin.entrypoints=websecure
-      - traefik.http.routers.jellyfin.rule=Host(`jf.$DOMAIN`)
+      - traefik.http.routers.jellyfin.rule=Host(`jf.${DOMAIN}`)
       - traefik.http.routers.jellyfin.tls=true
       - traefik.http.routers.jellyfin.service=jellyfin
       - traefik.http.services.jellyfin.loadbalancer.server.port=8096
       - glance.name=Jellyfin
-      - glance.url=https://jf.$DOMAIN
+      - glance.url=https://jf.${DOMAIN}
       - glance.icon=di:jellyfin
       - glance.description=Media Server
 
@@ -119,12 +119,12 @@ services:
       - traefik.enable=true
       - traefik.docker.network=revproxy
       - traefik.http.routers.fladder.entrypoints=websecure
-      - traefik.http.routers.fladder.rule=Host(`fladder.$DOMAIN`)
+      - traefik.http.routers.fladder.rule=Host(`fladder.${DOMAIN}`)
       - traefik.http.routers.fladder.tls=true
       - traefik.http.routers.fladder.service=fladder
       - traefik.http.services.fladder.loadbalancer.server.port=80
       - glance.name=Fladder
-      - glance.url=https://fladder.$DOMAIN
+      - glance.url=https://fladder.${DOMAIN}
       - glance.icon=di:fladder
       - glance.description=Alternative UI for Jellyfin
 
@@ -132,9 +132,9 @@ services:
     image: lscr.io/linuxserver/prowlarr
     container_name: prowlarr
     environment:
-      - TZ=$TZ
-      - PUID=$PUID
-      - PGID=$PGID
+      - TZ=${TZ}
+      - PUID=${PUID}
+      - PGID=${PGID}
     # ports:
     #   - 9696:9696
     volumes:
@@ -147,12 +147,12 @@ services:
       - traefik.enable=true
       - traefik.docker.network=revproxy
       - traefik.http.routers.prowlarr.entrypoints=websecure
-      - traefik.http.routers.prowlarr.rule=Host(`prowlarr.$DOMAIN`)
+      - traefik.http.routers.prowlarr.rule=Host(`prowlarr.${DOMAIN}`)
       - traefik.http.routers.prowlarr.tls=true
       - traefik.http.routers.prowlarr.service=prowlarr
       - traefik.http.services.prowlarr.loadbalancer.server.port=9696
       - glance.name=Prowlarr
-      - glance.url=https://prowlarr.$DOMAIN
+      - glance.url=https://prowlarr.${DOMAIN}
       - glance.icon=di:prowlarr
       - glance.description=ARR config
 
@@ -160,9 +160,9 @@ services:
     image: lscr.io/linuxserver/sabnzbd
     container_name: sab
     environment:
-      - TZ=$TZ
-      - PUID=$PUID
-      - PGID=$PGID
+      - TZ=${TZ}
+      - PUID=${PUID}
+      - PGID=${PGID}
     # ports:
     #   - 8181:8080 # port mapping
     volumes:
@@ -176,12 +176,12 @@ services:
       - traefik.enable=true
       - traefik.docker.network=revproxy
       - traefik.http.routers.sabnzbd.entrypoints=websecure
-      - traefik.http.routers.sabnzbd.rule=Host(`sab.$DOMAIN`)
+      - traefik.http.routers.sabnzbd.rule=Host(`sab.${DOMAIN}`)
       - traefik.http.routers.sabnzbd.tls=true
       - traefik.http.routers.sabnzbd.service=sabnzbd
       - traefik.http.services.sabnzbd.loadbalancer.server.port=8080
       - glance.name=Sabnzbd
-      - glance.url=https://sab.$DOMAIN
+      - glance.url=https://sab.${DOMAIN}
       - glance.icon=di:sabnzbd
       - glance.description=Usenet Downloader
 
@@ -189,16 +189,16 @@ services:
     image: lscr.io/linuxserver/sonarr
     container_name: sonarr
     environment:
-      - TZ=$TZ
-      - PUID=$PUID
-      - PGID=$PGID
+      - TZ=${TZ}
+      - PUID=${PUID}
+      - PGID=${PGID}
       - UMASK=22
     # ports:
     #   - 8989:8989 # port mapping
     volumes:
       - ./sonarr:/config # sonarr config dir
       - ./downloads:/downloads # your completed downloads directory from sab
-      - $WD8TB:/shares
+      - ${WD8TB}:/shares
     restart: unless-stopped
     networks:
       - revproxy
@@ -206,12 +206,12 @@ services:
       - traefik.enable=true
       - traefik.docker.network=revproxy
       - traefik.http.routers.sonarr.entrypoints=websecure
-      - traefik.http.routers.sonarr.rule=Host(`sonarr.$DOMAIN`)
+      - traefik.http.routers.sonarr.rule=Host(`sonarr.${DOMAIN}`)
       - traefik.http.routers.sonarr.tls=true
       - traefik.http.routers.sonarr.service=sonarr
       - traefik.http.services.sonarr.loadbalancer.server.port=8989
       - glance.name=Sonarr
-      - glance.url=https://sonarr.$DOMAIN/wanted/missing
+      - glance.url=https://sonarr.${DOMAIN}/wanted/missing
       - glance.icon=di:sonarr
       - glance.description=TV Shows
 
@@ -219,16 +219,16 @@ services:
     image: lscr.io/linuxserver/radarr
     container_name: radarr
     environment:
-      - TZ=$TZ
-      - PUID=$PUID
-      - PGID=$PGID
+      - TZ=${TZ}
+      - PUID=${PUID}
+      - PGID=${PGID}
       - UMASK=22
     # ports:
     #   - 7878:7878 # port mapping
     volumes:
       - ./radarr:/config # config directory for radarr
       - ./downloads:/downloads # completed downloads directory from sab
-      - $WD8TB:/shares
+      - ${WD8TB}:/shares
     restart: unless-stopped
     networks:
       - revproxy
@@ -236,12 +236,12 @@ services:
       - traefik.enable=true
       - traefik.docker.network=revproxy
       - traefik.http.routers.radarr.entrypoints=websecure
-      - traefik.http.routers.radarr.rule=Host(`radarr.$DOMAIN`)
+      - traefik.http.routers.radarr.rule=Host(`radarr.${DOMAIN}`)
       - traefik.http.routers.radarr.tls=true
       - traefik.http.routers.radarr.service=radarr
       - traefik.http.services.radarr.loadbalancer.server.port=7878
       - glance.name=Radarr
-      - glance.url=https://radarr.$DOMAIN/calendar
+      - glance.url=https://radarr.${DOMAIN}/calendar
       - glance.icon=di:radarr
       - glance.description=Movies
 
@@ -249,7 +249,7 @@ services:
     image: santiagosayshey/profilarr
     container_name: profilarr
     environment:
-      - TZ=$TZ
+      - TZ=${TZ}
     # ports:
     #   - 6868:6868
     volumes:
@@ -261,12 +261,12 @@ services:
       - traefik.enable=true
       - traefik.docker.network=revproxy
       - traefik.http.routers.profilarr.entrypoints=websecure
-      - traefik.http.routers.profilarr.rule=Host(`profilarr.$DOMAIN`)
+      - traefik.http.routers.profilarr.rule=Host(`profilarr.${DOMAIN}`)
       - traefik.http.routers.profilarr.tls=true
       - traefik.http.routers.profilarr.service=profilarr
       - traefik.http.services.profilarr.loadbalancer.server.port=6868
       - glance.name=Profilarr
-      - glance.url=https://profilarr.$DOMAIN
+      - glance.url=https://profilarr.${DOMAIN}
       - glance.icon=di:profilarr
       - glance.description=Quality Profile sync
 
@@ -275,11 +275,11 @@ services:
     container_name: jellyseerr
     environment:
       - LOG_LEVEL=debug
-      - TZ=$TZ
+      - TZ=${TZ}
     volumes:
       - ./jellyseerr:/app/config
-      - $HOMEDIR:/homedir
-      - $WD8TB:/shares
+      - ${HOMEDIR}:/homedir
+      - ${WD8TB}:/shares
     # ports:
     #   - 5055:5055
     restart: unless-stopped
@@ -289,12 +289,12 @@ services:
       - traefik.enable=true
       - traefik.docker.network=revproxy
       - traefik.http.routers.jellyseerr.entrypoints=websecure
-      - traefik.http.routers.jellyseerr.rule=Host(`js.$DOMAIN`)
+      - traefik.http.routers.jellyseerr.rule=Host(`js.${DOMAIN}`)
       - traefik.http.routers.jellyseerr.tls=true
       - traefik.http.routers.jellyseerr.service=jellyseerr
       - traefik.http.services.jellyseerr.loadbalancer.server.port=5055
       - glance.name=Jellyseerr
-      - glance.url=https://js.$DOMAIN
+      - glance.url=https://js.${DOMAIN}
       - glance.icon=di:jellyseerr
       - glance.description=Add Movies and TV Shows to auatomation
 
@@ -302,14 +302,14 @@ services:
     image: lscr.io/linuxserver/calibre-web:latest
     container_name: calibre
     environment:
-      - PUID=$PUID
-      - PGID=$PGID
-      - TZ=$TZ
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
       - DOCKER_MODS=linuxserver/mods:universal-calibre #optional
       - OAUTHLIB_RELAX_TOKEN_SCOPE=1 #optional
     volumes:
       - ./calibre/config:/config
-      - $SSD/library:/books
+      - ${SSD}/library:/books
     ports:
       - 8083:8083
     restart: unless-stopped
@@ -319,12 +319,12 @@ services:
       - traefik.enable=true
       - traefik.docker.network=revproxy
       - traefik.http.routers.calibre.entrypoints=websecure
-      - traefik.http.routers.calibre.rule=Host(`calibre.$DOMAIN`)
+      - traefik.http.routers.calibre.rule=Host(`calibre.${DOMAIN}`)
       - traefik.http.routers.calibre.tls=true
       - traefik.http.routers.calibre.service=calibre
       - traefik.http.services.calibre.loadbalancer.server.port=8083
       - glance.name=Calibre
-      - glance.url=https://calibre.$DOMAIN
+      - glance.url=https://calibre.${DOMAIN}
       - glance.icon=di:calibre
       - glance.description=Ebooks
 
@@ -333,12 +333,12 @@ services:
     container_name: pinchflat
     user: '1000:100'
     environment:
-      - TZ=$TZ
+      - TZ=${TZ}
     # ports:
     #   - 8945:8945
     volumes:
       - ./pinchflat:/config
-      - $SSD/Videos/youtube:/downloads
+      - ${SSD}/Videos/youtube:/downloads
     restart: unless-stopped
     networks:
       - revproxy
@@ -346,12 +346,12 @@ services:
       - traefik.enable=true
       - traefik.docker.network=revproxy
       - traefik.http.routers.pinchflat.entrypoints=websecure
-      - traefik.http.routers.pinchflat.rule=Host(`pinchflat.$DOMAIN`)
+      - traefik.http.routers.pinchflat.rule=Host(`pinchflat.${DOMAIN}`)
       - traefik.http.routers.pinchflat.tls=true
       - traefik.http.routers.pinchflat.service=pinchflat
       - traefik.http.services.pinchflat.loadbalancer.server.port=8945
       - glance.name=Pinchflat
-      - glance.url=https://pinchflat.$DOMAIN
+      - glance.url=https://pinchflat.${DOMAIN}
       - glance.icon=di:youtube
       - glance.description=Youtube Downloads
 
@@ -371,12 +371,12 @@ services:
       - traefik.enable=true
       - traefik.docker.network=revproxy
       - traefik.http.routers.beszel.entrypoints=websecure
-      - traefik.http.routers.beszel.rule=Host(`beszel.$DOMAIN`)
+      - traefik.http.routers.beszel.rule=Host(`beszel.${DOMAIN}`)
       - traefik.http.routers.beszel.tls=true
       - traefik.http.routers.beszel.service=beszel
       - traefik.http.services.beszel.loadbalancer.server.port=8090
       - glance.name=Beszel
-      - glance.url=https://beszel.$DOMAIN/system/omv
+      - glance.url=https://beszel.${DOMAIN}/system/omv
       - glance.icon=di:beszel
       - glance.description=System Monitor
       - glance.id=beszel
