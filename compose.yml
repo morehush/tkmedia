@@ -1,7 +1,7 @@
 ---
 
 networks:
-  revproxy:
+  ${PROXYNET}:
     external: true
 
 volumes:
@@ -23,7 +23,7 @@ services:
       HOMEPAGE_ALLOWED_HOSTS: home.${DOMAIN}
     restart: unless-stopped
     networks:
-      - revproxy
+      - ${PROXYNET}
     labels:
       - traefik.enable=true
       - traefik.http.routers.homepage.entrypoints=websecure
@@ -49,7 +49,7 @@ services:
     #   - 8080:8080
     restart: unless-stopped
     networks:
-      - revproxy
+      - ${PROXYNET}
     labels:
       - traefik.enable=true
       - traefik.http.routers.glance.entrypoints=websecure
@@ -91,10 +91,10 @@ services:
       - /dev/dri:/dev/dri #optional
     restart: unless-stopped
     networks:
-      - revproxy
+      - ${PROXYNET}
     labels:
       - traefik.enable=true
-      - traefik.docker.network=revproxy
+      - traefik.docker.network=${PROXYNET}
       - traefik.http.routers.jellyfin.entrypoints=websecure
       - traefik.http.routers.jellyfin.rule=Host(`jf.${DOMAIN}`)
       - traefik.http.routers.jellyfin.tls=true
@@ -114,10 +114,10 @@ services:
     #   - 80:80
     restart: unless-stopped
     networks:
-      - revproxy
+      - ${PROXYNET}
     labels:
       - traefik.enable=true
-      - traefik.docker.network=revproxy
+      - traefik.docker.network=${PROXYNET}
       - traefik.http.routers.fladder.entrypoints=websecure
       - traefik.http.routers.fladder.rule=Host(`fladder.${DOMAIN}`)
       - traefik.http.routers.fladder.tls=true
@@ -142,10 +142,10 @@ services:
       - ./downloads:/downloads
     restart: unless-stopped
     networks:
-      - revproxy
+      - ${PROXYNET}
     labels:
       - traefik.enable=true
-      - traefik.docker.network=revproxy
+      - traefik.docker.network=${PROXYNET}
       - traefik.http.routers.prowlarr.entrypoints=websecure
       - traefik.http.routers.prowlarr.rule=Host(`prowlarr.${DOMAIN}`)
       - traefik.http.routers.prowlarr.tls=true
@@ -171,10 +171,10 @@ services:
       - ./downloads/incomplete:/incomplete-downloads # temp directory for downloads
     restart: unless-stopped
     networks:
-      - revproxy
+      - ${PROXYNET}
     labels:
       - traefik.enable=true
-      - traefik.docker.network=revproxy
+      - traefik.docker.network=${PROXYNET}
       - traefik.http.routers.sabnzbd.entrypoints=websecure
       - traefik.http.routers.sabnzbd.rule=Host(`sab.${DOMAIN}`)
       - traefik.http.routers.sabnzbd.tls=true
@@ -201,10 +201,10 @@ services:
       - ${WD8TB}:/shares
     restart: unless-stopped
     networks:
-      - revproxy
+      - ${PROXYNET}
     labels:
       - traefik.enable=true
-      - traefik.docker.network=revproxy
+      - traefik.docker.network=${PROXYNET}
       - traefik.http.routers.sonarr.entrypoints=websecure
       - traefik.http.routers.sonarr.rule=Host(`sonarr.${DOMAIN}`)
       - traefik.http.routers.sonarr.tls=true
@@ -231,10 +231,10 @@ services:
       - ${WD8TB}:/shares
     restart: unless-stopped
     networks:
-      - revproxy
+      - ${PROXYNET}
     labels:
       - traefik.enable=true
-      - traefik.docker.network=revproxy
+      - traefik.docker.network=${PROXYNET}
       - traefik.http.routers.radarr.entrypoints=websecure
       - traefik.http.routers.radarr.rule=Host(`radarr.${DOMAIN}`)
       - traefik.http.routers.radarr.tls=true
@@ -256,10 +256,10 @@ services:
       - ./profilarr:/config
     restart: unless-stopped
     networks:
-      - revproxy
+      - ${PROXYNET}
     labels:
       - traefik.enable=true
-      - traefik.docker.network=revproxy
+      - traefik.docker.network=${PROXYNET}
       - traefik.http.routers.profilarr.entrypoints=websecure
       - traefik.http.routers.profilarr.rule=Host(`profilarr.${DOMAIN}`)
       - traefik.http.routers.profilarr.tls=true
@@ -284,10 +284,10 @@ services:
     #   - 5055:5055
     restart: unless-stopped
     networks:
-      - revproxy
+      - ${PROXYNET}
     labels:
       - traefik.enable=true
-      - traefik.docker.network=revproxy
+      - traefik.docker.network=${PROXYNET}
       - traefik.http.routers.jellyseerr.entrypoints=websecure
       - traefik.http.routers.jellyseerr.rule=Host(`js.${DOMAIN}`)
       - traefik.http.routers.jellyseerr.tls=true
@@ -314,10 +314,10 @@ services:
       - 8083:8083
     restart: unless-stopped
     networks:
-      - revproxy
+      - ${PROXYNET}
     labels:
       - traefik.enable=true
-      - traefik.docker.network=revproxy
+      - traefik.docker.network=${PROXYNET}
       - traefik.http.routers.calibre.entrypoints=websecure
       - traefik.http.routers.calibre.rule=Host(`calibre.${DOMAIN}`)
       - traefik.http.routers.calibre.tls=true
@@ -341,10 +341,10 @@ services:
       - ${SSD}/Videos/youtube:/downloads
     restart: unless-stopped
     networks:
-      - revproxy
+      - ${PROXYNET}
     labels:
       - traefik.enable=true
-      - traefik.docker.network=revproxy
+      - traefik.docker.network=${PROXYNET}
       - traefik.http.routers.pinchflat.entrypoints=websecure
       - traefik.http.routers.pinchflat.rule=Host(`pinchflat.${DOMAIN}`)
       - traefik.http.routers.pinchflat.tls=true
@@ -366,10 +366,10 @@ services:
       - host.docker.internal:host-gateway
     restart: unless-stopped
     networks:
-      - revproxy
+      - ${PROXYNET}
     labels:
       - traefik.enable=true
-      - traefik.docker.network=revproxy
+      - traefik.docker.network=${PROXYNET}
       - traefik.http.routers.beszel.entrypoints=websecure
       - traefik.http.routers.beszel.rule=Host(`beszel.${DOMAIN}`)
       - traefik.http.routers.beszel.tls=true
