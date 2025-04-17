@@ -25,16 +25,16 @@ services:
     networks:
       - revproxy
     labels:
-      - traefik.enable=true
-      - traefik.http.routers.homepage.entrypoints=websecure
-      - traefik.http.routers.homepage.rule=Host(`home.${DOMAIN}`)
-      - traefik.http.routers.homepage.tls=true
-      - traefik.http.routers.homepage.service=homepage
-      - traefik.http.services.homepage.loadbalancer.server.port=3000  
-      - glance.name=Homepage
-      - glance.url=https://home.${DOMAIN}
-      - glance.icon=di:homepage
-      - glance.description=A page for self-hosted and other services
+      traefik.enable: true
+      traefik.http.routers.homepage.entrypoints: websecure
+      traefik.http.routers.homepage.rule: Host(`home.${DOMAIN}`)
+      traefik.http.routers.homepage.tls: true
+      traefik.http.routers.homepage.service: homepage
+      traefik.http.services.homepage.loadbalancer.server.port: 3000
+      glance.name: Homepage
+      glance.url: https://home.${DOMAIN}
+      glance.icon: di:homepage
+      glance.description: A page for self-hosted and other services
 
   glance:
     container_name: glance
@@ -51,17 +51,17 @@ services:
     networks:
       - revproxy
     labels:
-      - traefik.enable=true
-      - traefik.http.routers.glance.entrypoints=websecure
-      - traefik.http.routers.glance.rule=Host(`glance.${DOMAIN}`)
-      - traefik.http.routers.glance.tls=true
-      - traefik.http.routers.glance.service=glance
-      - traefik.http.services.glance.loadbalancer.server.port=8080  
-      - glance.hide=true
-      - glance.name=Glance
-      - glance.url=https://glance.${DOMAIN}
-      - glance.icon=di:glance
-      - glance.description=Dashboard
+      traefik.enable: true
+      traefik.http.routers.glance.entrypoints: websecure
+      traefik.http.routers.glance.rule: Host(`glance.${DOMAIN}`)
+      traefik.http.routers.glance.tls: true
+      traefik.http.routers.glance.service: glance
+      traefik.http.services.glance.loadbalancer.server.port: 8080  
+      glance.hide: true
+      glance.name: Glance
+      glance.url: https://glance.${DOMAIN}
+      glance.icon: di:glance
+      glance.description: Dashboard
 
   jellyfin:
     image: lscr.io/linuxserver/jellyfin
@@ -93,17 +93,17 @@ services:
     # networks:
     #   - revproxy
     labels:
-      # - traefik.enable=true
-      # - traefik.docker.network=revproxy
-      # - traefik.http.routers.jellyfin.entrypoints=websecure
-      # - traefik.http.routers.jellyfin.rule=Host(`jf.${DOMAIN}`)
-      # - traefik.http.routers.jellyfin.tls=true
-      # - traefik.http.routers.jellyfin.service=jellyfin
-      # - traefik.http.services.jellyfin.loadbalancer.server.port=8096
-      - glance.name=Jellyfin
-      - glance.url=http://${DOMAIN}:8096
-      - glance.icon=di:jellyfin
-      - glance.description=Media Server
+      # traefik.enable: true
+      # traefik.docker.network: revproxy
+      # traefik.http.routers.jellyfin.entrypoints: websecure
+      # traefik.http.routers.jellyfin.rule: Host(`jf.${DOMAIN}`)
+      # traefik.http.routers.jellyfin.tls: true
+      # traefik.http.routers.jellyfin.service: jellyfin
+      # traefik.http.services.jellyfin.loadbalancer.server.port: 8096
+      glance.name: Jellyfin
+      glance.url: http://${DOMAIN}:8096
+      glance.icon: di:jellyfin
+      glance.description: Media Server
 
   prowlarr:
     image: lscr.io/linuxserver/prowlarr
@@ -121,17 +121,17 @@ services:
     networks:
       - revproxy
     labels:
-      - traefik.enable=true
-      - traefik.docker.network=revproxy
-      - traefik.http.routers.prowlarr.entrypoints=websecure
-      - traefik.http.routers.prowlarr.rule=Host(`prowlarr.${DOMAIN}`)
-      - traefik.http.routers.prowlarr.tls=true
-      - traefik.http.routers.prowlarr.service=prowlarr
-      - traefik.http.services.prowlarr.loadbalancer.server.port=9696
-      - glance.name=Prowlarr
-      - glance.url=https://prowlarr.${DOMAIN}
-      - glance.icon=di:prowlarr
-      - glance.description=ARR config
+      traefik.enable: true
+      traefik.docker.network: revproxy
+      traefik.http.routers.prowlarr.entrypoints: websecure
+      traefik.http.routers.prowlarr.rule: Host(`prowlarr.${DOMAIN}`)
+      traefik.http.routers.prowlarr.tls: true
+      traefik.http.routers.prowlarr.service: prowlarr
+      traefik.http.services.prowlarr.loadbalancer.server.port: 9696
+      glance.name: Prowlarr
+      glance.url: https://prowlarr.${DOMAIN}
+      glance.icon: di:prowlarr
+      glance.description: ARR config
 
   sabnzbd:
     image: lscr.io/linuxserver/sabnzbd
@@ -150,17 +150,17 @@ services:
     networks:
       - revproxy
     labels:
-      - traefik.enable=true
-      - traefik.docker.network=revproxy
-      - traefik.http.routers.sabnzbd.entrypoints=websecure
-      - traefik.http.routers.sabnzbd.rule=Host(`sab.${DOMAIN}`)
-      - traefik.http.routers.sabnzbd.tls=true
-      - traefik.http.routers.sabnzbd.service=sabnzbd
-      - traefik.http.services.sabnzbd.loadbalancer.server.port=8080
-      - glance.name=Sabnzbd
-      - glance.url=https://sab.${DOMAIN}
-      - glance.icon=di:sabnzbd
-      - glance.description=Usenet Downloader
+      traefik.enable: true
+      traefik.docker.network: revproxy
+      traefik.http.routers.sabnzbd.entrypoints: websecure
+      traefik.http.routers.sabnzbd.rule: Host(`sab.${DOMAIN}`)
+      traefik.http.routers.sabnzbd.tls: true
+      traefik.http.routers.sabnzbd.service: sabnzbd
+      traefik.http.services.sabnzbd.loadbalancer.server.port: 8080
+      glance.name: Sabnzbd
+      glance.url: https://sab.${DOMAIN}
+      glance.icon: di:sabnzbd
+      glance.description: Usenet Downloader
 
   sonarr:
     image: lscr.io/linuxserver/sonarr
@@ -180,17 +180,17 @@ services:
     networks:
       - revproxy
     labels:
-      - traefik.enable=true
-      - traefik.docker.network=revproxy
-      - traefik.http.routers.sonarr.entrypoints=websecure
-      - traefik.http.routers.sonarr.rule=Host(`sonarr.${DOMAIN}`)
-      - traefik.http.routers.sonarr.tls=true
-      - traefik.http.routers.sonarr.service=sonarr
-      - traefik.http.services.sonarr.loadbalancer.server.port=8989
-      - glance.name=Sonarr
-      - glance.url=https://sonarr.${DOMAIN}/wanted/missing
-      - glance.icon=di:sonarr
-      - glance.description=TV Shows
+      traefik.enable: true
+      traefik.docker.network: revproxy
+      traefik.http.routers.sonarr.entrypoints: websecure
+      traefik.http.routers.sonarr.rule: Host(`sonarr.${DOMAIN}`)
+      traefik.http.routers.sonarr.tls: true
+      traefik.http.routers.sonarr.service: sonarr
+      traefik.http.services.sonarr.loadbalancer.server.port: 8989
+      glance.name: Sonarr
+      glance.url: https://sonarr.${DOMAIN}/wanted/missing
+      glance.icon: di:sonarr
+      glance.description: TV Shows
 
   radarr:
     image: lscr.io/linuxserver/radarr
@@ -210,17 +210,17 @@ services:
     networks:
       - revproxy
     labels:
-      - traefik.enable=true
-      - traefik.docker.network=revproxy
-      - traefik.http.routers.radarr.entrypoints=websecure
-      - traefik.http.routers.radarr.rule=Host(`radarr.${DOMAIN}`)
-      - traefik.http.routers.radarr.tls=true
-      - traefik.http.routers.radarr.service=radarr
-      - traefik.http.services.radarr.loadbalancer.server.port=7878
-      - glance.name=Radarr
-      - glance.url=https://radarr.${DOMAIN}/calendar
-      - glance.icon=di:radarr
-      - glance.description=Movies
+      traefik.enable: true
+      traefik.docker.network: revproxy
+      traefik.http.routers.radarr.entrypoints: websecure
+      traefik.http.routers.radarr.rule: Host(`radarr.${DOMAIN}`)
+      traefik.http.routers.radarr.tls: true
+      traefik.http.routers.radarr.service: radarr
+      traefik.http.services.radarr.loadbalancer.server.port: 7878
+      glance.name: Radarr
+      glance.url: https://radarr.${DOMAIN}/calendar
+      glance.icon: di:radarr
+      glance.description: Movies
 
   profilarr:
     image: santiagosayshey/profilarr
@@ -235,17 +235,17 @@ services:
     networks:
       - revproxy
     labels:
-      - traefik.enable=true
-      - traefik.docker.network=revproxy
-      - traefik.http.routers.profilarr.entrypoints=websecure
-      - traefik.http.routers.profilarr.rule=Host(`profilarr.${DOMAIN}`)
-      - traefik.http.routers.profilarr.tls=true
-      - traefik.http.routers.profilarr.service=profilarr
-      - traefik.http.services.profilarr.loadbalancer.server.port=6868
-      - glance.name=Profilarr
-      - glance.url=https://profilarr.${DOMAIN}
-      - glance.icon=di:profilarr
-      - glance.description=Quality Profile sync
+      traefik.enable: true
+      traefik.docker.network: revproxy
+      traefik.http.routers.profilarr.entrypoints: websecure
+      traefik.http.routers.profilarr.rule: Host(`profilarr.${DOMAIN}`)
+      traefik.http.routers.profilarr.tls: true
+      traefik.http.routers.profilarr.service: profilarr
+      traefik.http.services.profilarr.loadbalancer.server.port: 6868
+      glance.name: Profilarr
+      glance.url: https://profilarr.${DOMAIN}
+      glance.icon: di:profilarr
+      glance.description: Quality Profile sync
 
   jellyseerr:
     image: fallenbagel/jellyseerr
@@ -263,17 +263,17 @@ services:
     networks:
       - revproxy
     labels:
-      - traefik.enable=true
-      - traefik.docker.network=revproxy
-      - traefik.http.routers.jellyseerr.entrypoints=websecure
-      - traefik.http.routers.jellyseerr.rule=Host(`js.${DOMAIN}`)
-      - traefik.http.routers.jellyseerr.tls=true
-      - traefik.http.routers.jellyseerr.service=jellyseerr
-      - traefik.http.services.jellyseerr.loadbalancer.server.port=5055
-      - glance.name=Jellyseerr
-      - glance.url=https://js.${DOMAIN}
-      - glance.icon=di:jellyseerr
-      - glance.description=Add Movies and TV Shows to auatomation
+      traefik.enable: true
+      traefik.docker.network: revproxy
+      traefik.http.routers.jellyseerr.entrypoints: websecure
+      traefik.http.routers.jellyseerr.rule: Host(`js.${DOMAIN}`)
+      traefik.http.routers.jellyseerr.tls: true
+      traefik.http.routers.jellyseerr.service: jellyseerr
+      traefik.http.services.jellyseerr.loadbalancer.server.port: 5055
+      glance.name: Jellyseerr
+      glance.url: https://js.${DOMAIN}
+      glance.icon: di:jellyseerr
+      glance.description: Add Movies and TV Shows to auatomation
 
   calibre:
     image: lscr.io/linuxserver/calibre-web:latest
@@ -293,17 +293,17 @@ services:
     networks:
       - revproxy
     labels:
-      - traefik.enable=true
-      - traefik.docker.network=revproxy
-      - traefik.http.routers.calibre.entrypoints=websecure
-      - traefik.http.routers.calibre.rule=Host(`calibre.${DOMAIN}`)
-      - traefik.http.routers.calibre.tls=true
-      - traefik.http.routers.calibre.service=calibre
-      - traefik.http.services.calibre.loadbalancer.server.port=8083
-      - glance.name=Calibre
-      - glance.url=https://calibre.${DOMAIN}
-      - glance.icon=di:calibre
-      - glance.description=Ebooks
+      traefik.enable: true
+      traefik.docker.network: revproxy
+      traefik.http.routers.calibre.entrypoints: websecure
+      traefik.http.routers.calibre.rule: Host(`calibre.${DOMAIN}`)
+      traefik.http.routers.calibre.tls: true
+      traefik.http.routers.calibre.service: calibre
+      traefik.http.services.calibre.loadbalancer.server.port: 8083
+      glance.name: Calibre
+      glance.url: https://calibre.${DOMAIN}
+      glance.icon: di:calibre
+      glance.description: Ebooks
 
   pinchflat:
     image: ghcr.io/kieraneglin/pinchflat:latest
@@ -320,17 +320,17 @@ services:
     networks:
       - revproxy
     labels:
-      - traefik.enable=true
-      - traefik.docker.network=revproxy
-      - traefik.http.routers.pinchflat.entrypoints=websecure
-      - traefik.http.routers.pinchflat.rule=Host(`pinchflat.${DOMAIN}`)
-      - traefik.http.routers.pinchflat.tls=true
-      - traefik.http.routers.pinchflat.service=pinchflat
-      - traefik.http.services.pinchflat.loadbalancer.server.port=8945
-      - glance.name=Pinchflat
-      - glance.url=https://pinchflat.${DOMAIN}
-      - glance.icon=di:pinchflat.png
-      - glance.description=Youtube Downloads
+      traefik.enable: true
+      traefik.docker.network: revproxy
+      traefik.http.routers.pinchflat.entrypoints: websecure
+      traefik.http.routers.pinchflat.rule: Host(`pinchflat.${DOMAIN}`)
+      traefik.http.routers.pinchflat.tls: true
+      traefik.http.routers.pinchflat.service: pinchflat
+      traefik.http.services.pinchflat.loadbalancer.server.port: 8945
+      glance.name: Pinchflat
+      glance.url: https://pinchflat.${DOMAIN}
+      glance.icon: di:pinchflat.png
+      glance.description: Youtube Downloads
 
   beszel:
     image: henrygd/beszel
@@ -345,18 +345,18 @@ services:
     networks:
       - revproxy
     labels:
-      - traefik.enable=true
-      - traefik.docker.network=revproxy
-      - traefik.http.routers.beszel.entrypoints=websecure
-      - traefik.http.routers.beszel.rule=Host(`beszel.${DOMAIN}`)
-      - traefik.http.routers.beszel.tls=true
-      - traefik.http.routers.beszel.service=beszel
-      - traefik.http.services.beszel.loadbalancer.server.port=8090
-      - glance.name=Beszel
-      - glance.url=https://beszel.${DOMAIN}/system/omv
-      - glance.icon=di:beszel
-      - glance.description=System Monitor
-      - glance.id=beszel
+      traefik.enable: true
+      traefik.docker.network: revproxy
+      traefik.http.routers.beszel.entrypoints: websecure
+      traefik.http.routers.beszel.rule: Host(`beszel.${DOMAIN}`)
+      traefik.http.routers.beszel.tls: true
+      traefik.http.routers.beszel.service: beszel
+      traefik.http.services.beszel.loadbalancer.server.port: 8090
+      glance.name: Beszel
+      glance.url: https://beszel.${DOMAIN}/system/omv
+      glance.icon: di:beszel
+      glance.description: System Monitor
+      glance.id: beszel
 
   beszel-agent:
     image: henrygd/beszel-agent:latest
@@ -370,5 +370,5 @@ services:
       KEY: 'ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIIrQQywcTALbSrVTG9NcHmQTlufiSQ5RX/0l6/OYs9ur'
     restart: unless-stopped
     labels:
-      - glance.name=agent
-      - glance.parent=beszel
+      glance.name: agent
+      glance.parent: beszel
