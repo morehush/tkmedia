@@ -3,7 +3,7 @@
 networks:
   revproxy:
     external: true
-  cloudflare:
+  pangolin:
     external: true
 
 volumes:
@@ -93,7 +93,7 @@ services:
     restart: unless-stopped
     networks:
       - revproxy
-      - cloudflare
+      - pangolin
     labels:
       traefik.enable: true
       traefik.docker.network: revproxy
