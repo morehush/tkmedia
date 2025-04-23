@@ -35,7 +35,7 @@ services:
       traefik.http.services.homepage.loadbalancer.server.port: 3000
       glance.name: Homepage
       glance.url: https://home.${DOMAIN}
-      glance.icon: di:homepage
+      glance.icon: sh:homepage
       glance.description: A page for self-hosted and other services
 
   glance:
@@ -62,7 +62,7 @@ services:
       glance.hide: true
       glance.name: Glance
       glance.url: https://glance.${DOMAIN}
-      glance.icon: di:glance
+      glance.icon: sh:glance
       glance.description: Dashboard
 
   jellyfin:
@@ -104,7 +104,7 @@ services:
       traefik.http.services.jellyfin.loadbalancer.server.port: 8096
       glance.name: Jellyfin
       glance.url: https://jf.${DOMAIN}
-      glance.icon: di:jellyfin
+      glance.icon: sh:jellyfin
       glance.description: Media Server
 
   prowlarr:
@@ -132,7 +132,7 @@ services:
       traefik.http.services.prowlarr.loadbalancer.server.port: 9696
       glance.name: Prowlarr
       glance.url: https://prowlarr.${DOMAIN}
-      glance.icon: di:prowlarr
+      glance.icon: sh:prowlarr
       glance.description: ARR config
 
   sabnzbd:
@@ -161,7 +161,7 @@ services:
       traefik.http.services.sabnzbd.loadbalancer.server.port: 8080
       glance.name: Sabnzbd
       glance.url: https://sab.${DOMAIN}
-      glance.icon: di:sabnzbd
+      glance.icon: sh:sabnzbd
       glance.description: Usenet Downloader
 
   sonarr:
@@ -191,7 +191,7 @@ services:
       traefik.http.services.sonarr.loadbalancer.server.port: 8989
       glance.name: Sonarr
       glance.url: https://sonarr.${DOMAIN}/wanted/missing
-      glance.icon: di:sonarr
+      glance.icon: sh:sonarr
       glance.description: TV Shows
 
   radarr:
@@ -221,7 +221,7 @@ services:
       traefik.http.services.radarr.loadbalancer.server.port: 7878
       glance.name: Radarr
       glance.url: https://radarr.${DOMAIN}/calendar
-      glance.icon: di:radarr
+      glance.icon: sh:radarr
       glance.description: Movies
 
   profilarr:
@@ -246,7 +246,7 @@ services:
       traefik.http.services.profilarr.loadbalancer.server.port: 6868
       glance.name: Profilarr
       glance.url: https://profilarr.${DOMAIN}
-      glance.icon: di:profilarr
+      glance.icon: sh:profilarr
       glance.description: Quality Profile sync
 
   jellyseerr:
@@ -274,7 +274,7 @@ services:
       traefik.http.services.jellyseerr.loadbalancer.server.port: 5055
       glance.name: Jellyseerr
       glance.url: https://js.${DOMAIN}
-      glance.icon: di:jellyseerr
+      glance.icon: sh:jellyseerr
       glance.description: Add Movies and TV Shows to auatomation
 
   calibre:
@@ -304,7 +304,7 @@ services:
       traefik.http.services.calibre.loadbalancer.server.port: 8083
       glance.name: Calibre
       glance.url: https://calibre.${DOMAIN}
-      glance.icon: di:calibre
+      glance.icon: sh:calibre
       glance.description: Ebooks
 
   pinchflat:
@@ -331,7 +331,7 @@ services:
       traefik.http.services.pinchflat.loadbalancer.server.port: 8945
       glance.name: Pinchflat
       glance.url: https://pinchflat.${DOMAIN}
-      glance.icon: di:pinchflat.png
+      glance.icon: sh:pinchflat.png
       glance.description: Youtube Downloads
 
   beszel:
@@ -356,7 +356,7 @@ services:
       traefik.http.services.beszel.loadbalancer.server.port: 8090
       glance.name: Beszel
       glance.url: https://beszel.${DOMAIN}/system/omv
-      glance.icon: di:beszel
+      glance.icon: sh:beszel
       glance.description: System Monitor
       glance.id: beszel
 
