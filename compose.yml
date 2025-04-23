@@ -35,7 +35,7 @@ services:
       traefik.http.services.homepage.loadbalancer.server.port: 3000
       glance.name: Homepage
       glance.url: https://home.${DOMAIN}
-      glance.icon: sh:homepage
+      glance.icon: sh:homepage.png
       glance.description: A page for self-hosted and other services
 
   glance:
@@ -132,7 +132,7 @@ services:
       traefik.http.services.prowlarr.loadbalancer.server.port: 9696
       glance.name: Prowlarr
       glance.url: https://prowlarr.${DOMAIN}
-      glance.icon: sh:prowlarr
+      glance.icon: sh:prowlarr.png
       glance.description: ARR config
 
   sabnzbd:
