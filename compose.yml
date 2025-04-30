@@ -33,10 +33,6 @@ services:
       traefik.http.routers.homepage.tls: true
       traefik.http.routers.homepage.service: homepage
       traefik.http.services.homepage.loadbalancer.server.port: 3000
-      glance.name: Homepage
-      glance.url: https://home.${DOMAIN}
-      glance.icon: di:homepage
-      glance.description: A page for self-hosted and other services
 
   glance:
     container_name: glance
@@ -59,11 +55,6 @@ services:
       traefik.http.routers.glance.tls: true
       traefik.http.routers.glance.service: glance
       traefik.http.services.glance.loadbalancer.server.port: 8080  
-      glance.hide: true
-      glance.name: Glance
-      glance.url: https://glance.${DOMAIN}
-      glance.icon: di:glance
-      glance.description: Dashboard
 
   jellyfin:
     image: lscr.io/linuxserver/jellyfin
@@ -102,10 +93,6 @@ services:
       traefik.http.routers.jellyfin.tls: true
       traefik.http.routers.jellyfin.service: jellyfin
       traefik.http.services.jellyfin.loadbalancer.server.port: 8096
-      glance.name: Jellyfin
-      glance.url: https://jf.${DOMAIN}
-      glance.icon: di:jellyfin
-      glance.description: Media Server
 
   prowlarr:
     image: lscr.io/linuxserver/prowlarr
@@ -130,10 +117,6 @@ services:
       traefik.http.routers.prowlarr.tls: true
       traefik.http.routers.prowlarr.service: prowlarr
       traefik.http.services.prowlarr.loadbalancer.server.port: 9696
-      glance.name: Prowlarr
-      glance.url: https://prowlarr.${DOMAIN}
-      glance.icon: di:prowlarr
-      glance.description: ARR config
 
   sabnzbd:
     image: lscr.io/linuxserver/sabnzbd
@@ -159,10 +142,6 @@ services:
       traefik.http.routers.sabnzbd.tls: true
       traefik.http.routers.sabnzbd.service: sabnzbd
       traefik.http.services.sabnzbd.loadbalancer.server.port: 8080
-      glance.name: Sabnzbd
-      glance.url: https://sab.${DOMAIN}
-      glance.icon: di:sabnzbd
-      glance.description: Usenet Downloader
 
   sonarr:
     image: lscr.io/linuxserver/sonarr
@@ -189,10 +168,6 @@ services:
       traefik.http.routers.sonarr.tls: true
       traefik.http.routers.sonarr.service: sonarr
       traefik.http.services.sonarr.loadbalancer.server.port: 8989
-      glance.name: Sonarr
-      glance.url: https://sonarr.${DOMAIN}/wanted/missing
-      glance.icon: di:sonarr
-      glance.description: TV Shows
 
   radarr:
     image: lscr.io/linuxserver/radarr
@@ -219,10 +194,6 @@ services:
       traefik.http.routers.radarr.tls: true
       traefik.http.routers.radarr.service: radarr
       traefik.http.services.radarr.loadbalancer.server.port: 7878
-      glance.name: Radarr
-      glance.url: https://radarr.${DOMAIN}/calendar
-      glance.icon: di:radarr
-      glance.description: Movies
 
   profilarr:
     image: santiagosayshey/profilarr
@@ -244,10 +215,6 @@ services:
       traefik.http.routers.profilarr.tls: true
       traefik.http.routers.profilarr.service: profilarr
       traefik.http.services.profilarr.loadbalancer.server.port: 6868
-      glance.name: Profilarr
-      glance.url: https://profilarr.${DOMAIN}
-      glance.icon: di:profilarr
-      glance.description: Quality Profile sync
 
   jellyseerr:
     image: fallenbagel/jellyseerr
@@ -272,10 +239,57 @@ services:
       traefik.http.routers.jellyseerr.tls: true
       traefik.http.routers.jellyseerr.service: jellyseerr
       traefik.http.services.jellyseerr.loadbalancer.server.port: 5055
-      glance.name: Jellyseerr
-      glance.url: https://js.${DOMAIN}
-      glance.icon: di:jellyseerr
-      glance.description: Add Movies and TV Shows to auatomation
+
+  jellystat-db:
+    image: postgres:15.2
+    shm_size: '1gb'
+    container_name: jellystat-db
+    restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+        max-file: "5"
+        max-size: "10m"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: NXsctlBVFWb66OH8E0zggGQMpujCXJWw
+    volumes:
+      - ./jellystat/postgres-data:/var/lib/postgresql/data
+    networks:
+      - default
+
+  jellystat:
+    image: cyfershepard/jellystat:latest
+    container_name: jellystat
+    restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+        max-file: "5"
+        max-size: "10m"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: NXsctlBVFWb66OH8E0zggGQMpujCXJWw
+      POSTGRES_IP: jellystat-db
+      POSTGRES_PORT: 5432
+      JWT_SECRET: "Ts1QbuaZxiBG17sUAdr5jyAvfjI8Xttu"
+      TZ: America/New_York # timezone (ex: Europe/Paris)
+    volumes:
+      - ./jellystat/jellystat-backup-data:/app/backend/backup-data
+    # ports:
+    #   - "3000:3000"
+    depends_on:
+      - jellystat-db
+    networks:
+      - default
+      - revproxy
+    labels:
+      traefik.enable: true
+      traefik.http.routers.jellystat.entrypoints: websecure
+      traefik.http.routers.jellystat.rule: Host(`jellystat.${DOMAIN}`)
+      traefik.http.routers.jellystat.tls: true
+      traefik.http.routers.jellystat.service: jellystat
+      traefik.http.services.jellystat.loadbalancer.server.port: 3000  
 
   calibre:
     image: lscr.io/linuxserver/calibre-web:latest
@@ -302,10 +316,6 @@ services:
       traefik.http.routers.calibre.tls: true
       traefik.http.routers.calibre.service: calibre
       traefik.http.services.calibre.loadbalancer.server.port: 8083
-      glance.name: Calibre
-      glance.url: https://calibre.${DOMAIN}
-      glance.icon: di:calibre
-      glance.description: Ebooks
 
   pinchflat:
     image: ghcr.io/kieraneglin/pinchflat:latest
@@ -329,10 +339,6 @@ services:
       traefik.http.routers.pinchflat.tls: true
       traefik.http.routers.pinchflat.service: pinchflat
       traefik.http.services.pinchflat.loadbalancer.server.port: 8945
-      glance.name: Pinchflat
-      glance.url: https://pinchflat.${DOMAIN}
-      glance.icon: di:pinchflat.png
-      glance.description: Youtube Downloads
 
   beszel:
     image: henrygd/beszel
@@ -354,11 +360,6 @@ services:
       traefik.http.routers.beszel.tls: true
       traefik.http.routers.beszel.service: beszel
       traefik.http.services.beszel.loadbalancer.server.port: 8090
-      glance.name: Beszel
-      glance.url: https://beszel.${DOMAIN}/system/omv
-      glance.icon: di:beszel
-      glance.description: System Monitor
-      glance.id: beszel
 
   beszel-agent:
     image: henrygd/beszel-agent:latest
@@ -371,6 +372,3 @@ services:
       # Do not remove quotes around the key
       KEY: 'ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIIrQQywcTALbSrVTG9NcHmQTlufiSQ5RX/0l6/OYs9ur'
     restart: unless-stopped
-    labels:
-      glance.name: agent
-      glance.parent: beszel
