@@ -34,27 +34,27 @@ services:
       traefik.http.routers.homepage.service: homepage
       traefik.http.services.homepage.loadbalancer.server.port: 3000
 
-  glance:
-    container_name: glance
-    image: glanceapp/glance
-    environment:
-      - GITHUB_TOKEN=${GITHUB_TOKEN}
-    volumes:
-      - ./glance/config:/app/config
-      - ./glance/assets:/app/assets
-      - /var/run/docker.sock:/var/run/docker.sock:ro
-    # ports:
-    #   - 8080:8080
-    restart: unless-stopped
-    networks:
-      - revproxy
-    labels:
-      traefik.enable: true
-      traefik.http.routers.glance.entrypoints: websecure
-      traefik.http.routers.glance.rule: Host(`glance.${DOMAIN}`)
-      traefik.http.routers.glance.tls: true
-      traefik.http.routers.glance.service: glance
-      traefik.http.services.glance.loadbalancer.server.port: 8080  
+  # glance:
+  #   container_name: glance
+  #   image: glanceapp/glance
+  #   environment:
+  #     - GITHUB_TOKEN=${GITHUB_TOKEN}
+  #   volumes:
+  #     - ./glance/config:/app/config
+  #     - ./glance/assets:/app/assets
+  #     - /var/run/docker.sock:/var/run/docker.sock:ro
+  #   # ports:
+  #   #   - 8080:8080
+  #   restart: unless-stopped
+  #   networks:
+  #     - revproxy
+  #   labels:
+  #     traefik.enable: true
+  #     traefik.http.routers.glance.entrypoints: websecure
+  #     traefik.http.routers.glance.rule: Host(`glance.${DOMAIN}`)
+  #     traefik.http.routers.glance.tls: true
+  #     traefik.http.routers.glance.service: glance
+  #     traefik.http.services.glance.loadbalancer.server.port: 8080  
 
   jellyfin:
     image: lscr.io/linuxserver/jellyfin
