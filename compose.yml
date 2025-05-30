@@ -291,31 +291,56 @@ services:
       traefik.http.routers.jellystat.service: jellystat
       traefik.http.services.jellystat.loadbalancer.server.port: 3000  
 
-  calibre:
-    image: lscr.io/linuxserver/calibre-web:latest
-    container_name: calibre
+  calibre-web-automated:
+    image: crocodilestick/calibre-web-automated
+    container_name: calibre-web-automated
     environment:
       - PUID=${PUID}
       - PGID=${PGID}
-      - TZ=${TZ}
-      - DOCKER_MODS=linuxserver/mods:universal-calibre #optional
-      - OAUTHLIB_RELAX_TOKEN_SCOPE=1 #optional
+      - TZ=${TZ} 
     volumes:
-      - ./calibre/config:/config
-      - ${SSD}/library:/books
+      - ./calibre/config:/config 
+      - $SSD/Sync/calibre:/cwa-book-ingest
+      - ${SSD}/library:/calibre-library 
     ports:
-      - 8083:8083
+      - 8083:8083 
     restart: unless-stopped
     networks:
       - revproxy
     labels:
       traefik.enable: true
       traefik.docker.network: revproxy
-      traefik.http.routers.calibre.entrypoints: websecure
-      traefik.http.routers.calibre.rule: Host(`calibre.${DOMAIN}`)
-      traefik.http.routers.calibre.tls: true
-      traefik.http.routers.calibre.service: calibre
-      traefik.http.services.calibre.loadbalancer.server.port: 8083
+      traefik.http.routers.calibre-web-automated.entrypoints: websecure
+      traefik.http.routers.calibre-web-automated.rule: Host(`calibre.${DOMAIN}`)
+      traefik.http.routers.calibre-web-automated.tls: true
+      traefik.http.routers.calibre-web-automated.service: calibre-web-automated
+      traefik.http.services.calibre-web-automated.loadbalancer.server.port: 8083
+
+  # calibre:
+  #   image: lscr.io/linuxserver/calibre-web:latest
+  #   container_name: calibre
+  #   environment:
+  #     - PUID=${PUID}
+  #     - PGID=${PGID}
+  #     - TZ=${TZ}
+  #     - DOCKER_MODS=linuxserver/mods:universal-calibre #optional
+  #     - OAUTHLIB_RELAX_TOKEN_SCOPE=1 #optional
+  #   volumes:
+  #     - ./calibre/config:/config
+  #     - ${SSD}/library:/books
+  #   ports:
+  #     - 8083:8083
+  #   restart: unless-stopped
+  #   networks:
+  #     - revproxy
+  #   labels:
+  #     traefik.enable: true
+  #     traefik.docker.network: revproxy
+  #     traefik.http.routers.calibre.entrypoints: websecure
+  #     traefik.http.routers.calibre.rule: Host(`calibre.${DOMAIN}`)
+  #     traefik.http.routers.calibre.tls: true
+  #     traefik.http.routers.calibre.service: calibre
+  #     traefik.http.services.calibre.loadbalancer.server.port: 8083
 
   pinchflat:
     image: ghcr.io/kieraneglin/pinchflat:latest
