@@ -3,7 +3,7 @@
 networks:
   revproxy:
     external: true
-  pangolin:
+  cloudflare:
     external: true
 
 volumes:
@@ -84,7 +84,7 @@ services:
     restart: unless-stopped
     networks:
       - revproxy
-      - pangolin
+      - cloudflare
     labels:
       traefik.enable: true
       traefik.docker.network: revproxy
@@ -105,7 +105,7 @@ services:
     #   - 9696:9696
     volumes:
       - ./prowlarr:/config
-      - ./downloads:/downloads
+      - $HOMEDIR/downloads:/downloads
     restart: unless-stopped
     networks:
       - revproxy
@@ -129,8 +129,8 @@ services:
     #   - 8181:8080 # port mapping
     volumes:
       - ./sabnzbd/config:/config # sab config directory
-      - ./downloads:/downloads # completed directory for downloads. this contains the category directories
-      - ./downloads/incomplete:/incomplete-downloads # temp directory for downloads
+      - $HOMEDIR/downloads:/downloads # completed directory for downloads. this contains the category directories
+      - $HOMEDIR/downloads/incomplete:/incomplete-downloads # temp directory for downloads
     restart: unless-stopped
     networks:
       - revproxy
@@ -155,7 +155,7 @@ services:
     #   - 8989:8989 # port mapping
     volumes:
       - ./sonarr:/config # sonarr config dir
-      - ./downloads:/downloads # your completed downloads directory from sab
+      - $HOMEDIR/downloads:/downloads # your completed downloads directory from sab
       - ${WD8TB}:/shares
     restart: unless-stopped
     networks:
@@ -181,7 +181,7 @@ services:
     #   - 7878:7878 # port mapping
     volumes:
       - ./radarr:/config # config directory for radarr
-      - ./downloads:/downloads # completed downloads directory from sab
+      - $HOMEDIR/downloads:/downloads # completed downloads directory from sab
       - ${WD8TB}:/shares
     restart: unless-stopped
     networks:
@@ -315,32 +315,6 @@ services:
       traefik.http.routers.calibre-web-automated.tls: true
       traefik.http.routers.calibre-web-automated.service: calibre-web-automated
       traefik.http.services.calibre-web-automated.loadbalancer.server.port: 8083
-
-  # calibre:
-  #   image: lscr.io/linuxserver/calibre-web:latest
-  #   container_name: calibre
-  #   environment:
-  #     - PUID=${PUID}
-  #     - PGID=${PGID}
-  #     - TZ=${TZ}
-  #     - DOCKER_MODS=linuxserver/mods:universal-calibre #optional
-  #     - OAUTHLIB_RELAX_TOKEN_SCOPE=1 #optional
-  #   volumes:
-  #     - ./calibre/config:/config
-  #     - ${SSD}/library:/books
-  #   ports:
-  #     - 8083:8083
-  #   restart: unless-stopped
-  #   networks:
-  #     - revproxy
-  #   labels:
-  #     traefik.enable: true
-  #     traefik.docker.network: revproxy
-  #     traefik.http.routers.calibre.entrypoints: websecure
-  #     traefik.http.routers.calibre.rule: Host(`calibre.${DOMAIN}`)
-  #     traefik.http.routers.calibre.tls: true
-  #     traefik.http.routers.calibre.service: calibre
-  #     traefik.http.services.calibre.loadbalancer.server.port: 8083
 
   pinchflat:
     image: ghcr.io/kieraneglin/pinchflat:latest
