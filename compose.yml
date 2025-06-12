@@ -3,7 +3,7 @@
 networks:
   revproxy:
     external: true
-  cloudflare:
+  pangolin:
     external: true
 
 volumes:
@@ -84,7 +84,7 @@ services:
     restart: unless-stopped
     networks:
       - revproxy
-      - cloudflare
+      - pangolin
     labels:
       traefik.enable: true
       traefik.docker.network: revproxy
@@ -338,3 +338,20 @@ services:
       traefik.http.routers.pinchflat.tls: true
       traefik.http.routers.pinchflat.service: pinchflat
       traefik.http.services.pinchflat.loadbalancer.server.port: 8945
+
+  omnitools:
+    image: iib0011/omni-tools
+    container_name: omnitools
+    # ports:
+    #   - 8080:80
+    restart: unless-stopped
+    networks:
+      - revproxy
+    labels:
+      traefik.enable: true
+      traefik.docker.network: revproxy
+      traefik.http.routers.omnitools.entrypoints: websecure
+      traefik.http.routers.omnitools.rule: Host(`omnitools.${DOMAIN}`)
+      traefik.http.routers.omnitools.tls: true
+      traefik.http.routers.omnitools.service: omnitools
+      traefik.http.services.omnitools.loadbalancer.server.port: 80
