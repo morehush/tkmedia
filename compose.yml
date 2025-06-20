@@ -20,9 +20,11 @@ services:
       - ./homepage:/app/config
       - ${WD8TB}:/wd8tb
       - ${SSD}:/ssd
-      - /var/run/docker.sock:/var/run/docker.sock # (optional) For docker integrations
+      - /var/run/docker.sock:/var/run/docker.sock:ro # (optional) For docker integrations
     environment:
       HOMEPAGE_ALLOWED_HOSTS: home.${DOMAIN}
+      PUID: ${PUID}
+      PGID: ${PGID}
     restart: unless-stopped
     networks:
       - revproxy
@@ -142,6 +144,7 @@ services:
       traefik.http.routers.sabnzbd.tls: true
       traefik.http.routers.sabnzbd.service: sabnzbd
       traefik.http.services.sabnzbd.loadbalancer.server.port: 8080
+      traefik.http.routers.sabnzbd.middlewares: tinyauth
 
   sonarr:
     image: lscr.io/linuxserver/sonarr
@@ -338,6 +341,7 @@ services:
       traefik.http.routers.pinchflat.tls: true
       traefik.http.routers.pinchflat.service: pinchflat
       traefik.http.services.pinchflat.loadbalancer.server.port: 8945
+      traefik.http.routers.pinchflat.middlewares: tinyauth
 
   omnitools:
     image: iib0011/omni-tools
@@ -355,3 +359,4 @@ services:
       traefik.http.routers.omnitools.tls: true
       traefik.http.routers.omnitools.service: omnitools
       traefik.http.services.omnitools.loadbalancer.server.port: 80
+      traefik.http.routers.omnitools.middlewares: tinyauth
