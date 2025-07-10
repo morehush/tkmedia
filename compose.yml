@@ -36,27 +36,27 @@ services:
       traefik.http.routers.homepage.service: homepage
       traefik.http.services.homepage.loadbalancer.server.port: 3000
 
-  # glance:
-  #   container_name: glance
-  #   image: glanceapp/glance
-  #   environment:
-  #     - GITHUB_TOKEN=${GITHUB_TOKEN}
-  #   volumes:
-  #     - ./glance/config:/app/config
-  #     - ./glance/assets:/app/assets
-  #     - /var/run/docker.sock:/var/run/docker.sock:ro
-  #   # ports:
-  #   #   - 8080:8080
-  #   restart: unless-stopped
-  #   networks:
-  #     - revproxy
-  #   labels:
-  #     traefik.enable: true
-  #     traefik.http.routers.glance.entrypoints: websecure
-  #     traefik.http.routers.glance.rule: Host(`glance.${DOMAIN}`)
-  #     traefik.http.routers.glance.tls: true
-  #     traefik.http.routers.glance.service: glance
-  #     traefik.http.services.glance.loadbalancer.server.port: 8080  
+  glance:
+    container_name: glance
+    image: glanceapp/glance
+    environment:
+      - GITHUB_TOKEN=${GITHUB_TOKEN}
+    volumes:
+      - ./glance/config:/app/config
+      - ./glance/assets:/app/assets
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    # ports:
+    #   - 8080:8080
+    restart: unless-stopped
+    networks:
+      - revproxy
+    labels:
+      traefik.enable: true
+      traefik.http.routers.glance.entrypoints: websecure
+      traefik.http.routers.glance.rule: Host(`glance.${DOMAIN}`)
+      traefik.http.routers.glance.tls: true
+      traefik.http.routers.glance.service: glance
+      traefik.http.services.glance.loadbalancer.server.port: 8080  
 
   jellyfin:
     image: lscr.io/linuxserver/jellyfin
@@ -343,20 +343,38 @@ services:
       traefik.http.services.pinchflat.loadbalancer.server.port: 8945
       traefik.http.routers.pinchflat.middlewares: tinyauth
 
-  omnitools:
-    image: iib0011/omni-tools
-    container_name: omnitools
+  speedtest:
+    image: openspeedtest/latest
+    container_name: speedtest
     # ports:
-    #   - 8080:80
+    #   - 3000:3000
+    #   - 3001:3001
     restart: unless-stopped
     networks:
       - revproxy
     labels:
       traefik.enable: true
       traefik.docker.network: revproxy
-      traefik.http.routers.omnitools.entrypoints: websecure
-      traefik.http.routers.omnitools.rule: Host(`omnitools.${DOMAIN}`)
-      traefik.http.routers.omnitools.tls: true
-      traefik.http.routers.omnitools.service: omnitools
-      traefik.http.services.omnitools.loadbalancer.server.port: 80
-      traefik.http.routers.omnitools.middlewares: tinyauth
+      traefik.http.routers.speedtest.entrypoints: websecure
+      traefik.http.routers.speedtest.rule: Host(`speedtest.${DOMAIN}`)
+      traefik.http.routers.speedtest.tls: true
+      traefik.http.routers.speedtest.service: speedtest
+      traefik.http.services.speedtest.loadbalancer.server.port: 3000
+
+  # omnitools:
+  #   image: iib0011/omni-tools
+  #   container_name: omnitools
+  #   # ports:
+  #   #   - 8080:80
+  #   restart: unless-stopped
+  #   networks:
+  #     - revproxy
+  #   labels:
+  #     traefik.enable: true
+  #     traefik.docker.network: revproxy
+  #     traefik.http.routers.omnitools.entrypoints: websecure
+  #     traefik.http.routers.omnitools.rule: Host(`omnitools.${DOMAIN}`)
+  #     traefik.http.routers.omnitools.tls: true
+  #     traefik.http.routers.omnitools.service: omnitools
+  #     traefik.http.services.omnitools.loadbalancer.server.port: 80
+  #     traefik.http.routers.omnitools.middlewares: tinyauth
