@@ -360,21 +360,3 @@ services:
       traefik.http.routers.speedtest.tls: true
       traefik.http.routers.speedtest.service: speedtest
       traefik.http.services.speedtest.loadbalancer.server.port: 3000
-
-  # omnitools:
-  #   image: iib0011/omni-tools
-  #   container_name: omnitools
-  #   # ports:
-  #   #   - 8080:80
-  #   restart: unless-stopped
-  #   networks:
-  #     - revproxy
-  #   labels:
-  #     traefik.enable: true
-  #     traefik.docker.network: revproxy
-  #     traefik.http.routers.omnitools.entrypoints: websecure
-  #     traefik.http.routers.omnitools.rule: Host(`omnitools.${DOMAIN}`)
-  #     traefik.http.routers.omnitools.tls: true
-  #     traefik.http.routers.omnitools.service: omnitools
-  #     traefik.http.services.omnitools.loadbalancer.server.port: 80
-  #     traefik.http.routers.omnitools.middlewares: tinyauth
